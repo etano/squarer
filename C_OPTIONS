@@ -5,7 +5,7 @@ FORSUB = forsub
 #FFLAGS =  -r8 -w -O3 
 # compilation options for  linuxrtl
 FC = gfortran
-FFLAGS = -g -check bounds
+FFLAGS = -g -O3
 
 .F.o :
 	$(FC) $(FFLAGS) -c $*.F $(LIBFN) $(LIBRTL) $(LDFLAGS)

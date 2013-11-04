@@ -6,4 +6,4 @@
 #LDFLAGS = -I/home/common/lib/sprng1.0/SRC -L/home/common/lib/sprng1.0_intel/lib -llcg64 -llinpack -L/home/common/lib/linpack_intel -L/opt/intel/mkl72/lib/32 -lmkl_def 
 #LDFLAGS = -I/home/common/lib/sprng1.0/SRC -L/home/common/lib/sprng1.0/lib_gnu -llcg64 -L/home/common/lib/linpack -llinpack  -L/usr/lib -lblas
 #LDFLAGS = -I/opt/intel/mkl/9.1/include -I/usr/src/sprng/SRC -L/usr/lib/sprng-1.0 -llcg64 -L/usr/lib -llinpack  -L/opt/intel/mkl/9.1/lib/em64t -lmkl_def -lmkl_em64t 
-LDFLAGS = -I/home/ethan/SRC/sprng/include -I/home/ethan/SRC/sprng/SRC -L/home/ethan/SRC/sprng/lib -I/usr/include -L/usr/lib -I/opt/intel/mkl/include -L/opt/intel/mkl/lib/intel64 -lmkl_def -lmkl_core -lmkl_sequential -lmkl_intel_lp64 -llcg64 -lblas -llapack -I/home/ethan/SRC/linpack -L/home/ethan/SRC/linpack
+LDFLAGS = -I/usr/include -L/usr/lib -I${SQUARER_HOME}/sprng/include -I${SQUARER_HOME}/sprng/SRC -L${SQUARER_HOME}/sprng/lib -llcg64 -I${SQUARER_HOME}/linpack -L${SQUARER_HOME}/linpack -lblas -llapack 

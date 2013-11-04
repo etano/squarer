@@ -48,12 +48,12 @@ c
       equivalence (rmach(4),diver(1))
       equivalence (rmach(5),log10(1))
 c
-c ***** added 3/93 -- jcg *****
-c these are the machine constants for the ibm RISC 6000 or the HP
+c ***** added 11/13 -- ewb *****
+c these are the machine constants for double precision real machines
 c
-      data rmach(1) /2.2250738585072014E-308/
-      data rmach(2) /1.7976931348623158E+308/
-      data rmach(3) /2.2204460492503131E-16/
+      data rmach(1) /4.450147717014403D-308/
+      data rmach(2) /8.988465674311579D+307/
+      data rmach(3) /1.110223024625157D-016/
       data rmach(5) /0.30103/
       rmach(4)=rmach(3)*2.
 c

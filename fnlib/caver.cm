@@ -1,1 +1,10 @@
-../pimc/caver.cm
+c scalar averages are kept in this common block
+      integer maver ! maximum number of scalar averages
+      parameter (maver=90)
+      real*8 ablock,anorm,ansum,avsq,avsum,avtemp
+      common/caver/ablock(maver),anorm(maver),ansum(maver),avsq(maver)
+     .            ,avsum(maver),avtemp(maver)
+      integer naver,nblock
+      common/icaver/naver,nblock
+      character*16 aunits,qaname
+      common/ccaver/aunits(maver),qaname(maver)
