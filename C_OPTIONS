@@ -1,12 +1,7 @@
 FORLIB = forsub/*.o
-FORSUB = forsub
+FORSUB = Nforsub
 
-#FC = ifort 
-#FFLAGS =  -r8 -w -O3 
-# compilation options for  linuxrtl
+# compilation options for  rtls/linuxrtl
 FC = gfortran
 FFLAGS = -g -O3
 
-.F.o :
-	$(FC) $(FFLAGS) -c $*.F $(LIBFN) $(LIBRTL) $(LDFLAGS)
-.SUFFIXES : .o .F

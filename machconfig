@@ -1,0 +1,100 @@
+#!/bin/sh
+
+FORSUB="Nforsub"
+FORLIB="forsub/*.o"
+LINUXDIR=linuxrtl
+FC="gfortran"
+LINUXFLAGS="-g -O3"
+SPRNGFLAGS="-I${SQUARER_HOME}/sprng/SRC -L${SQUARER_HOME}/sprng/lib -llcg64"
+BLASLAPACKFLAGS="-L/usr/lib -I/usr/include -lblas -llapack -I${SQUARER_HOME}/linpack -L${SQUARER_HOME}/linpack"
+LINUXLD="${SPRNGFLAGS} ${BLASLAPACKFLAGS}"
+
+IBMDIR=ibmrtl
+IBMFLAGS="-g -qdpc=e -O"
+
+CRAYDIR=crayrtl
+CRAYFLAGS=
+
+SUNDIR=sunrtl
+SUNFLAGS="-O "
+
+HPDIR=hprtl
+HPFLAGS="-R8 -O "
+ 
+SGDIR=sgrtl
+SGFLAGS="-O2 -TARG:platform=ip32_10k  -r8  -mips4 -n32"
+
+SYS=`uname -s`
+case `uname -s` in
+   AIX)
+   # IBM RS6000
+        MACHDIR=$IBMDIR
+        FFLAGS=$IBMFLAGS
+        ;;
+   sn1516|sn2020|sn2003|unicos|sn4007)
+   # Cray YMP, Cray-2
+        MACHDIR=$CRAYDIR
+        FFLAGS=$CRAYFLAGS
+        FORSUB=""
+        FORLIB=""
+        echo FC = "$(FC)"
+        ;;
+   SunOS)
+   # Sun
+        MACHDIR=$SUNDIR
+        FFLAGS=$SUNFLAGS
+        ;;
+   Linux)
+   # Linux
+        MACHDIR=$LINUXDIR
+        FFLAGS=$LINUXFLAGS
+        LDFLAGS=$LINUXLD
+
+        ;;
+   HP*)
+   # HP-UX
+        MACHDIR=$HPDIR
+        FFLAGS=$HPFLAGS
+        ;;
+   IRIX)
+   #Silicon Graphics
+        MACHDIR=$SGDIR
+        FFLAGS=SGFLAGS
+        LDFLAGS="-n32 -lcomplib.sgimath"
+        ;;
+   *)
+   # We don't recognize this operating system.
+        echo FAILED
+        exit 1
+        ;;
+esac
+
+rm rtl
+MACHDIR=rtls/$MACHDIR
+ln -s $MACHDIR rtl
+
+echo '# compiler options in forsub '       >  forsub/OPTIONS
+echo FFLAGS  = $FFLAGS                     >> forsub/OPTIONS
+#vi forsub/OPTIONS
+echo '# compiler options for ' $MACHDIR    > rtl/OPTIONS
+echo FFLAGS = $FFLAGS                      >> rtl/OPTIONS
+#vi rtl/OPTIONS
+echo FORLIB  = $FORLIB                     >  C_OPTIONS
+echo FORSUB  = $FORSUB                     >> C_OPTIONS
+echo                                       >> C_OPTIONS
+echo '# compilation options for ' $MACHDIR >> C_OPTIONS
+echo FC = $FC                              >> C_OPTIONS
+echo FFLAGS = $FFLAGS                      >> C_OPTIONS
+echo                                       >> C_OPTIONS
+#vi C_OPTIONS
+echo '# link options for ' $MACHDIR        >  L_OPTIONS
+if [ "$MACHDIR" = "crayrtl" ]
+then
+     echo FC = segldr                      >> L_OPTIONS
+     FC = segldr
+fi
+echo LDFLAGS = $LDFLAGS                    >> L_OPTIONS
+
+echo $MACHDIR > environment
+echo $MACHDIR 
+#vi L_OPTIONS

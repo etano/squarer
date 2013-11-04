@@ -1,0 +1,9 @@
+#
+size squarer
+echo "enter memory limit"
+set mem = $<
+echo "enter time limit"
+set time = $<
+echo "enter queue"
+set Queue = $<
+qsub -A xle -q $Queue -lT $time -lM $mem  sqid

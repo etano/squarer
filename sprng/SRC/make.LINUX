@@ -6,7 +6,7 @@ RANLIB = ranlib
 CC = gcc
 CLD = $(CC)
 # Set f77 to echo if you do not have a FORTRAN compiler
-F77 = g77
+F77 = gfortran
 #F77 = echo
 F77LD = $(F77)
 FFXN = -DAdd__

@@ -1,9 +1,2 @@
-# link options for  linuxrtl
-#LDFLAGS = -I/home/common/lib/sprng1.0/SRC -L/home/common/lib/sprng1.0/lib_gnu -llcg64
-#LDFLAGS = -I/home/common/lib/sprng1.0/SRC -L/home/common/lib/sprng1.0/lib_gnu -llcg64 -L/home/common/lib/linpack -llinpack  -L/usr/lib -lblas
-#LDFLAGS = -I/home/common/lib/sprng1.0/SRC -L/home/common/lib/sprng1.0_intel/lib -llcg64 
-#LDFLAGS = -I/home/common/lib/sprng1.0/SRC -L/home/common/lib/sprng1.0/lib_gnu -llcg64 -L/home/common/lib/linpack -llinpack  -L/usr/lib -lblas
-#LDFLAGS = -I/home/common/lib/sprng1.0/SRC -L/home/common/lib/sprng1.0_intel/lib -llcg64 -llinpack -L/home/common/lib/linpack_intel -L/opt/intel/mkl72/lib/32 -lmkl_def 
-#LDFLAGS = -I/home/common/lib/sprng1.0/SRC -L/home/common/lib/sprng1.0/lib_gnu -llcg64 -L/home/common/lib/linpack -llinpack  -L/usr/lib -lblas
-#LDFLAGS = -I/opt/intel/mkl/9.1/include -I/usr/src/sprng/SRC -L/usr/lib/sprng-1.0 -llcg64 -L/usr/lib -llinpack  -L/opt/intel/mkl/9.1/lib/em64t -lmkl_def -lmkl_em64t 
-LDFLAGS = -I/usr/include -L/usr/lib -I${SQUARER_HOME}/sprng/include -I${SQUARER_HOME}/sprng/SRC -L${SQUARER_HOME}/sprng/lib -llcg64 -I${SQUARER_HOME}/linpack -L${SQUARER_HOME}/linpack -lblas -llapack 
+# link options for  rtls/linuxrtl
+LDFLAGS = -I/home/ethan/src/squarer/sprng/SRC -L/home/ethan/src/squarer/sprng/lib -llcg64 -L/usr/lib -I/usr/include -lblas -llapack -I/home/ethan/src/squarer/linpack -L/home/ethan/src/squarer/linpack

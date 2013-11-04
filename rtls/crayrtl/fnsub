@@ -1,0 +1,28 @@
+#
+echo "enter run"
+set tid = $<
+echo "enter instance"
+set tin = $<
+qstat | head -5
+qstat | grep '^a'
+size fn
+echo "enter memory limit xxxMw"
+set mem = $<
+echo "enter time limit in seconds"
+set time = $<
+echo "enter queue"
+set Queue = $<
+echo 'y' | rm $tid
+touch $tid
+ed $tid <<EOF
+a
+cd /scriy/u10692/fnsun
+echo $tid |  fn
+tar -cvf temp $tid* 
+cfs save temp:fnpimc/runs/$tid.$tin.tar
+echo 'y' | rm temp
+.
+w
+q
+EOF
+qsub -A upn -q $Queue -lT $time -lM $mem  $tid

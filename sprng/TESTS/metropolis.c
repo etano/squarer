@@ -154,7 +154,7 @@ void metropolis(int block_size, int use_blocks)
  
   #ifdef SYNC
     printf("\n\tStreams are synchronized!\n");
-  #elif !SYNC
+  #else
     printf("\n\tStreams are not synchronized!\n");
   #endif
 printf("         \tEnergy\t\tEnergy_error\tSigma_Energy\tCv\t\tCv_error\tSigma_Cv\n");
@@ -169,7 +169,7 @@ printf("         \tEnergy\t\tEnergy_error\tSigma_Energy\tCv\t\tCv_error\tSigma_C
 	dE = energy_difference(k);
 #ifdef SYNC
 	if(expJ[dE]>sprng(genptr[k])){ 
-#elif !SYNC
+#else
 	if(dE<=0 || expJ[dE]>sprng(genptr[k])){ 
 #endif
 	  energy += dE;
@@ -321,7 +321,7 @@ void thermalize(int block_size, int discard_blocks)
 	dE = energy_difference(k);
 #ifdef SYNC
 	if(expJ[dE]>sprng(genptr[k])) 
-#elif !SYNC
+#else
 	if(dE<=0 || expJ[dE]>sprng(genptr[k]))
 #endif
 	{    

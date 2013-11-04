@@ -1,7 +1,7 @@
 include ../C_OPTIONS
 include ../L_OPTIONS
 
-LIBFN=       ../fnlib/*.o
+LIBFN=   ../fnlib/*.o
 LIBRTL=  ../rtl/*.o
 LIBFOR=  ../forsub/*.o
 

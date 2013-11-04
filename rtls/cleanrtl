@@ -1,0 +1,9 @@
+#! /bin/sh
+if [ -d rtl ] 
+then 
+  cd rtl 
+  make clean 
+  cd .. 
+  rm -f rtl  
+fi
+

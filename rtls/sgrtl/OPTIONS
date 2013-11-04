@@ -1,0 +1,2 @@
+# compiler options for  sgrtl
+FFLAGS = -O2 -TARG:platform=ip32_10k  -r8  -mips4 -n32
