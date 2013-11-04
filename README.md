@@ -1,7 +1,7 @@
 squarer
 =======
 
-Fortran library for computing density matrices
+Fortran library for computing density matrices for use with [PIMC++](https://github.com/etano/pimcpp)
 
 Installation
 --------------
