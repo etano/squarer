@@ -1,0 +1,2 @@
+# compiler options in forsub 
+FFLAGS = -g -O

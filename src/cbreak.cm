@@ -1,0 +1,5 @@
+      integer nknots,m,maxn,maxm,maxknots
+      parameter(maxm=6,maxknots=40)
+      real*8 sm,rknot,b,delta
+      common/cbreak/m,maxn,nknots,delta,sm(0:maxm,0:2*maxm+1)
+     & ,b(0:maxknots*(maxm+1)-1),rknot(0:maxknots)

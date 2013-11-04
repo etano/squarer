@@ -1,0 +1,17 @@
+c periodic boundary conditions fucntions. ell and el2 must be defined elsewhere.
+c returns the displacement vector between -L/2 and +L/2
+      real*8 ell,el2,elli,fpbc,fabc,dfpbc,fpbct
+      integer lfpbc,iwra,iwrap
+      common/cbc/ell(3),el2(3),elli(3)
+c     fpbc(dfpbc,lfpbc)=cvmgp(dfpbc-sign(ell(lfpbc),dfpbc)
+c                            ,dfpbc,abs(dfpbc)-el2(lfpbc))
+      fpbc(dfpbc,lfpbc)=dfpbc-ell(lfpbc)*anint(elli(lfpbc)*dfpbc)
+c     fpbc(dfpbc,lfpbc)=dfpbc
+c returns the square of the displacement vector
+      fabc(dfpbc,lfpbc)=(el2(lfpbc)-abs(el2(lfpbc)-abs(dfpbc)))**2
+c     fabc(dfpbc,lfpbc)=dfpbc**2
+c this is when you know which side one particle is on
+c     fpbct(dfpbc,lfpbc)=cvmgp(dfpbc-t(lfpbc),dfpbc,abs(dfpbc)-el2(lfpbc))
+      fpbct(dfpbc,lfpbc)=dfpbc-ell(lfpbc)*anint(elli(lfpbc)*dfpbc)
+c     fpbct(dfpbc,lfpbc)=dfpbc
+      iwrap(iwra)=1+mod(iwra+nslices-1,nslices)

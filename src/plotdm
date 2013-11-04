@@ -1,0 +1,186 @@
+uplot 4
+      erase
+      relocate (17000 31000)
+      label $1 file $2
+      data $2.$1"1"
+      read {r 1 u00 2 u10 3 u11 4}
+      location 3500 30000 3500 30000
+      ticksize 0 0  0 0
+      set lv = (r>$3) ? u00 : 0
+      limits $3 $4 lv
+      box
+      connect r u00
+      connect r u10
+      connect r u11
+plot1 4
+      erase
+      relocate (17000 31000)
+      label $1 file $2
+      data $2.$1"1"
+      read {r 1 u00 2 u10 3 u11 4}
+      ticksize 0 0  0 0
+      location 3000 15000 3000 15000
+      set lv = (r>$3) ? u10 : 0
+      limits $3 $4 lv
+      box
+      xlabel u10
+      connect r u10
+      location 3000 15000 20000 32000
+      set lv = (r>$3) ? u00 : 0
+      limits $3 $4 lv
+      box
+      xlabel u00
+      connect r u00
+      location 20000 32000 3000 15000
+      set lv = (r>$3) ? u11 : 0
+      limits $3 $4 lv
+      box
+      xlabel u11
+      connect r u11
+plot2 4
+      erase
+      relocate (16000 32100)
+      label $1 file $2
+      data $2.$1"2"
+      read {r 1 u00 2 u10 3 u11 4 u20 5 u21 6 u22 7}
+      ticksize 0 0  0 0
+      location 3000 11000 3000 15000
+      set lv = (r>$3) ? u00 : 0
+      limits $3 $4 lv
+      box
+      xlabel u00
+      connect r u00
+      location 13500 22500 3000 15000
+      set lv = (r>$3) ? u10 : 0
+      limits $3 $4 lv
+      box
+      xlabel u10
+      connect r u10
+      location 24000 32000 3000 15000
+      set lv = (r>$3) ? u11 : 0
+      limits $3 $4 lv
+      box
+      xlabel u11
+      connect r u11
+      location 3000 11000 19000 31000
+      set lv = (r>$3) ? u20 : 0
+      limits $3 $4 lv
+      box
+      xlabel u20
+      connect r u20
+      location 13500 22500 19000 31000
+      set lv = (r>$3) ? u21 : 0
+      limits $3 $4 lv
+      box
+      xlabel u21
+      connect r u21
+      location 24000 32000 19000 31000
+      set lv = (r>$3) ? u22 : 0
+      limits $3 $4 lv
+      box
+      xlabel u22
+      connect r u22
+dmerror 3
+      erase
+      notation -4 4 0 -1
+      expand 1
+      angle 0
+      relocate (13000 31000)
+      label rms error of file $1
+      data $1.chh
+      read { r 1 u1 2 u2 3 u3 4 b1 5 b2 6 b3 7 k1 8 k2 9 k3 10}
+      ticksize 0 0 -1 0
+      location 5000 15000 18000 30000 
+      limits $2 $3 -5 0
+      box
+      xlabel r
+      ylabel \chi (u)
+      connect r (lg(u1))
+      connect r (lg(u2))
+      connect r (lg(u3))
+      location 20000 30000 18000 30000 
+      limits $2 $3  -5 3
+      box
+      xlabel r
+      ylabel \chi (u_{\beta})
+      connect r (lg(b1))
+      connect r (lg(b2))
+      connect r (lg(b3))
+      location 20000 30000 3000 15000 
+      limits $2 $3 -5 3
+      box
+      xlabel r
+      ylabel \chi (u_{K})
+      connect r (lg(k1))
+      connect r (lg(k2))
+      connect r (lg(k3))
+      notation -4 4 -4 4
+dmerror2 3
+      erase
+      notation -4 4 0 -1
+      expand 1
+      angle 0
+      relocate (13000 31000)
+      label rms error of file $1
+      data $1.chh
+      read { r 1 u1 2 u2 3 u3 4 u4 5 b1 6 b2 7 b3 8 b4 9}
+      ticksize 0 0 -1 0
+      location 5000 15000 18000 30000 
+      limits $2 $3 -5 0
+      box
+      xlabel r
+      ylabel \chi (u)
+      connect r (lg(u1))
+      connect r (lg(u2))
+      connect r (lg(u3))
+      connect r (lg(u4))
+      location 20000 30000 18000 30000 
+      limits $2 $3  -5 3
+      box
+      xlabel r
+      ylabel \chi (u_{\beta})
+      connect r (lg(b1))
+      connect r (lg(b2))
+      connect r (lg(b3))
+      connect r (lg(b4))
+lvalue 1
+      erase
+      data fort.1$1 
+      read { r 2 u 3 e 4 f 5}
+      limits r u
+      location 5000 15000 2000 10000
+      ylabel u
+      box
+      connect r u
+      limits r e
+      location 5000 15000 12000 20000
+      box
+      ylabel e
+      connect r e
+      limits r f
+      location 5000 15000 22000 30000
+      ylabel f
+      box
+      connect r f
+diff  2
+      erase
+      data fort.90
+      read {r 1 g1 2 g2 3 diff 4}
+      set lv = (r>$1) ? g1 : 0
+      limits $1 $2  lv
+      location 5000 30000 3000 13000
+      box
+      xlabel r
+      ylabel values
+      connect r g1
+      connect r g2
+      set lv = (r>$1) ? diff : 0
+      limits $1 $2  lv
+      location 5000 30000 16000 30000
+      box
+      xlabel r
+      ylabel difference
+      connect r diff
+
+redo  0
+      macro read plotdm

@@ -1,0 +1,473 @@
+\documentstyle{article}
+\newcommand{\be}{\begin{equation}}
+\newcommand{\ee}{\end{equation}}
+\newcommand{\bv}{\begin{verbatim}}
+\newcommand{\ev}{\end{verbatim}}
+\begin{document}
+\title{How to use the upi code}
+\author{D. M. Ceperley}
+\maketitle
+\section{Introduction}
+This document gives instructions on how to run the path integral
+program.
+
+One starts the study of a new physical simulation with the 
+specification of the potential energy function. This is done
+in the program POTGEN and discussed in the previous manual. 
+Usually one then uses the output of
+POTGEN to construct the density matrix with the SQUARER code.  
+A set up program constructs of the
+input to FNPIMC.  OCSET is a set up program for a single component
+systems, either liquid or solid but homogenous.
+Finally FNPIMC is run and the results are
+analyzed with various other programs. Although I have
+generic 
+programs it is expected that the user modify OCSET and
+the analysis codes for more their application.
+
+Please look at the manual for Squarer for the syntax for SQUARER.
+
+\section{Input Commands for UPI}
+Commands can be in any order as long as a few rules are obeyed.
+Particle types must be defined before they are used.
+
+\begin{enumerate}
+
+\item UNITS (optional)
+\bv
+UNITS eunit lunit : 
+\ev
+This is used for labelling various quantities but not to calculate
+anything.
+ 
+\item
+  
+\bv
+     ENORM    x
+\ev
+The total energy is divided by x.
+\item IFDIAG
+\bv
+     IFDIAG   n
+\ev
+Level at which off-diagonal terms are used
+\item NOLEAK
+\bv
+     NOLEAK   
+\ev
+\item BOXSIZE (necessary command)
+\ev
+     BOXSIZE  L1 L2 Ldim
+\ev
+The size of the periodic box in the ndim  directions. ndim is a parameter
+isn uppi.p which sets the number of physical dimensions.1
+\item CUTK
+\bv
+     CUTK    
+\ev
+Cutoff in k-space for s(k).
+\item BETA (necessary)
+\bv
+BETA     1  1.        
+\ev    
+where $\beta =1/(k_b*T) $.
+\item NSLICES (necessary)
+\bv
+     NSLICES  nslices 
+\ev
+ number of time slices
+\item FREESAMP
+\bv
+     FREESAMP t1 t2...  off 
+\ev
+If present free particle sampling, otherwise  will use the
+sampling table. t1 t2 and so on are the types of particles
+that you want to turn free sampling on for.
+\item KSAMP
+\bv
+     KSAMP t1 t2... 
+\ev
+if present turn on k-space sampling
+t1 t2 and so on are the types of particles
+that you want to turn k-space sampling on for.
+One must have regular sampling on for these particle and be using Ewald
+sums.
+\item GAMMA
+\bv
+     GAMMA   nmovers type value 
+\ev
+ prefactor for sampling permutation (SELECT) and probability 
+of attempting moves in OMOVE defaults are 1
+\item NREF
+\bv
+     NREF   n 
+\ev
+ number of reference points (0,1 or 2)
+            0 corresponds to ground state nodes
+            1 is 1 reference point
+            2 is 2 symmetrically arranged points
+\item WRITEPC
+\bv
+     WRITEPC  freq
+\
+The number of passes between writes to file id.pc
+of the compressed configuration files. The default is to never write.
+\item DEBUG
+\bv
+DEBUG   debug 
+\ev
+debug level (0 =no tests, 1 some test, 2 many tests)
+Default is no tests.
+
+\item DISPLACE
+\bv
+ DISPLACE  type distance [ gamma 
+\ev
+  move the entire chain uniformly in a cube
+  of  side distance -not for fermions
+  gamma is the probability of attempting individual  move
+\item TIMER (optional)
+Timer set the maximum time in CPU seconds that a block can run for.
+\bv
+TIMER  time
+\ev
+Without this command upi will execute until the specified number of
+passes are finished.
+         
+\item TYPE (required)
+One must have a TYPE command for each species of particles.
+\bv
+TYPE name nspins number hbs2m (nppss(i),i=1,nspins) fname [ charge.
+\ev
+     hbs2m =0 means a fixed particle
+
+Number is the number of particles of this type.
+
+     nspins =-1 means distinguishable particles
+     nspins =0  means bosons
+     nspins >0  means fermions with spin degeneracy of nspins.
+     In this case the number of each spin will be nppss.
+
+fname contains the initial starting positions.
+if name starts with a '+' aged configurations will be assumed
+
+     charge = optional charge on species
+\item LINE
+defines a line particle (like a vortex line). 
+\bv
+  LINE name x1 y1 | ...  xn | zn
+\ev
+
+The input are triplets (in 3d) or pairs (in 2d). `
+The coordinates of the particles are given as (x y z)
+
+with the number representing the orientation of the line 
+being replaced by the symbol '|' (the UNIX pipe).
+Example: (LINE vortex 0. 0. | ) represents are 'vortex' particle
+which is a line passing through the origin in the z direction.
+
+\item PLANE
+Defines n plane-like particles.  
+\bv
+  PLANE name d1 x1 ... dn xn
+\ev
+The input are pairs (d1 x1) which means
+the normals are in the d1 direction and
+that coordinate is x1. where $d_i$ is an integer $1 \le d_i \le ndim$.
+
+\item POT PAIR (optional)
+
+This command generates an interaction between the two types of particles.
+file is assumed to be generated from squarer.
+\bv
+POT PAIR type1 type2 file [ntact nteng
+\ev
+Without a POT PAIR command there will be no pair interactions.
+
+The code saves space by using pointers to the data, thus if
+'file' appears a second time, the data is not read in but
+the second pointer points to the first location.  This implies
+that the computed pair correlations are also grouped together.
+The potential and action are assumed to be constant outside
+the range of the table. 
+The optional parameters ntact and nteng are the number of offdiagonal
+terms used in the evaluation of the action and energy (their 
+default is 3 and 6).  
+ 
+\item  SEED (optional)
+used to set the random number seed
+Default is to use the clock and possibly the processor number.
+The number actually used is written out and the job can be rerun by
+using that as the seed.
+\bv
+SEED value
+\ev
+
+\item  RESTART (required)
+This command seperates the setup from the running of the code.
+\bv
+RESTART [ type  [file
+\ev
+There are 3 levels of restart. NONE, PARTIAL (only pickup up 
+path not averages) and FULL. default is NONE
+The default for file is qid.rs
+ 
+\item 
+OMOVE nblocks , nsteps , levels
+   nblocks = number of blocks to do
+   nsteps = total number of passes/block
+   levels = level of move (i.e. =1 only midpoint..)
+       a pass consists an attempted move of all particles
+       after a pass we do analysis, reference move, write out configurations
+    and insertion, and a displacement.
+ 
+\item  SELECT
+\bv
+SELECT nblocks , nsteps, levels, nhits
+\ev
+       a pass consists an nhits attempted moves
+       after a pass we do analysis, reference move, write out configurations
+    and insertion, and a displacement.
+ 
+\item
+\begin{verbatim}
+PERMUTE nblocks , nsteps, levels, nhits
+\end{verbatim}
+The input is rather similar to SELECT but 'nhits' and 'gamma' must
+be chosen differently.
+A pass consists  of first randomly selecting a time interval,
+constructing the table of pair distances, then making nhits attempted construction
+of cyclic permutations.  
+After a pass we do analysis, reference move, write out configurations
+and insertion, and a displacement.
+If the parameter TIMER is set, the block is finished after a certain amount
+of CPU time, instead of a fixed number of passes.
+
+PERMUTE differs from select in that the permutation step is accepted or
+rejected before the call to WEAVE, (where the path is constructed) and
+that the cyclic permutation is constructed from a random walk through label
+space instead of explicitly looking at all possible cyclic permutations.
+This means that one can do longer permutation moves simply by increasing
+MNMOVERS.  Currently PERMUTE is less robust than SELECT in that the 
+GAMMA parameters need to be carefully chosen. Also it uses many random numbers.
+One should continue to use SELECT if the permutation acceptance ratio
+is greater than .5. 
+
+NHITS should be set to a large value ( on the order of NPARTS^2) because
+many permutations are tried out before a successful one is found.  One can
+look a "fraction of time in weave" to get some idea of the time spent 
+constructing the path.  
+
+GAMMA parameters have a different meaning in PERMUTE and need to be adjusted
+by hand.
+
+GAMMA(1,itype) is 
+used to select the TYPE of particle to be moved; $\gamma_{1,i}$ is
+the probability that type $i$ is moved.  It is only used if
+ntypes>1 when we must have $\sum_i \gamma_{1,i} = 1$.  
+
+GAMMA(j,itype) for $j>1$ is the probablity that we continue construction
+cycles of length $j$ or longer. The cycle is cutoff at length $m$ if
+GAMMA(m+1,itype)=0 or if m=MNMOVERS.  Hence $0 \le \gamma_{j,i} \le 1$. 
+
+Here is a typical setup for generating cycles of length 6 and less:
+(MNMOVERS=6)
+
+\begin{verbatim}
+GAMMA 1 4HE 1.
+GAMMA 2 4HE .98
+GAMMA 3 4HE .95
+GAMMA 4 4HE  .8
+GAMMA 5 4HE  .8
+GAMMA 6 4HE  .8
+\end{verbatim} 
+Here is a fermion setup where only 1, 3 and 5 cycles are generated:
+\begin{verbatim} 
+GAMMA 1 3HE 1.    ! not really needed if one-component problems.
+GAMMA 2 3HE  .95  ! 5% of time try 1 particle moves.
+GAMMA 3 3HE  1.   !  no pair exchanges.
+GAMMA 4 3HE  .8   ! 20% of time try 3 particle moves.
+GAMMA 5 3HE  1.   ! no 4 particle exchanges.
+GAMMA 6 3HE  0.   ! no 6 or higher exchanges.
+\end{verbatim}
+
+
+\item 
+READPC nblock [ nspb [ levels [ filename
+      read packed file and compute energy
+      nblock = number of statistical blocks
+      nspb= number of steps/block [1]
+      levels = time step level [1]
+      filename to read configurations [qid.pc]
+\end{enumerate}
+ 
+\subsection{ File Naming convention: } 
+\begin{itemize}
+\item
+    .cm  common block (include)
+\item
+    .dm  is a density matrix file
+\item
+    .f   fortran source
+\item
+    .ic  data file containing input coordinates
+         (just coordinates at one time slice)
+\item
+    .in  input file specifying type and length of the run
+\item
+    .os  diagnostics generated by setup program
+\item
+    .p   parameters to dimension variables (include)
+\item
+    .pc packed configuration file = unit 90
+\item
+    .sc  scalar averages (time history) =unit 62
+Source files:
+\item
+    .f : principle source (recompile if .p files change)
+\item
+    fnlib.f : 'library' files (do not depend on .p files)
+\item
+    *set.f  : sources which produce .sy input for various problems
+ 
+Fixed files produced or required by fnpimc:
+ 
+\item
+    qid.sy : system file:sets up system and wavefunction
+\item
+    qid.in : executes the Monte Carlo
+\item
+    qid.out: output of fnpimc (unit 6)
+\item
+    qid.sc : scalar averages
+\item
+    qid.mm : maximum memory used (unit 77)
+\item
+    qid.gr : g(r)
+\item
+    qid.sk : s(k)
+\item
+    qid.gv : rho(k)
+\item
+    Error messages are written to unit *
+\end{itemize}
+ 
+
+ 
+\subsection{Data file formats}
+
+A data file consists of a number of tensors.
+Two keywords must be defined for each tensor:
+Only the RANK and BEGIN commands are required.
+\begin{enumerate}
+\item RANK (required)
+This command gives the rank of the next tensor
+and all of its dimensions.
+\bv
+ RANK nrank n_1,....ni_nrank
+\ev
+\item
+\bv
+ BEGIN [ informative labelling possible
+\ev
+   data starts in the record following the begin
+   there must be exactly n1*n2*   nnrank floating words.
+ 
+\item
+ CGRID dimension (cvalues(i),i=1,ndimension)
+     specifies character labeling of the values in the specified dimen.
+\item
+ LABEL dimension value
+     gives an overall label to a given dimension
+\item SIZE
+ SIZE indicies minimum maximum
+     specifies that x(indices) are between min and max
+ 
+   configuration  data file contaning coordinates or vectors
+       ** RANK nrank n1,    nrank; where n1 is spatial dimensionality                                         n2 is the number of particles
+                                         n3 number of configuration
+       ** SIZE (nrank indices) minimum maximum
+             will give the box size in the various dimensions
+       **  BEGIN
+             all real data
+
+\end{enumerate}
+The types of particle, line and plane are implemented as follows.
+Types line and plane are implemetented by assuming the line and
+plane are parallel to the box axis. Then when vector distances between
+particles are found, certain compenents of the vector are zeroed.
+Needed in codrift, dsntce and anal and offd. (the calculations are
+
+\section{Examples}
+Here is some output for OCset
+\begin{verbatim}
+ input name of run
+bos1    ********************[RUN id]
+ input dm file 
+C01     *******************
+  8 CMD: UNTS H A0
+  8 CMD: TYPE p .5
+  8 CMD: TYPE p .5
+  8 CMD: GRID 150 LINEAR .2 31.
+  8 CMD: SQUARER .125 5 3 3 15 14
+  8 CMD: POT COUL 24. 1. .001
+  8 CMD:POTTAIL    0.22272E-02  0
+  8 CMD: RANK 2 150,  1
+ input: nparts 
+54  *****************************[number of particles]
+  input density 
+.00023873 *************************
+ input crystal number of unit cells in each direction
+ crystal:1=sc,2=bcc,3=hcp,4=fcc(3d),3=triangular(2d)
+2 3 3 3 ********************************[bcc lattice]
+ computing  54 lattice sites  dimensionality 3 number density  0.23873E-03
+   body centered cubic lattice
+ q displs    0.00000   0.00000   0.00000
+ q displs    0.50000   0.50000   0.50000
+ npuc  2 nvacancies     0 box size 0.60930E+02 0.60930E+02 0.60930E+02
+ number of cells in each direction    3    3    3
+ nearest and next nearest neighbor distance   0.17589E+02 0.20310E+02
+  possible fits=3
+  possible tslice 0.125,  0.25,  0.5,  1.,  2.
+  input Temp, tslice 
+.0125 .125 ************************************[beta=80, tau=8]
+  nslices = 10 temp 1.25E-2
+ input: nspins nppss 
+0 ****************************[bosons]
+  number of k-vectors 2,  9
+  input blocks passes, levels for omove 
+5 5 3 *******************************[3 levels maximum for omove]
+  input blocks, passes, levels, hitsfor select 
+0 0 0 0 *****************************[No select]
+ STOP 
+\end{verbatim}
+Here is bos1.sy produced
+\begin{verbatim}
+    ENORM    0.54000000E+02
+ BOXSIZE  0.6092968328E+02  0.6092968328E+02  0.6092968328E+02
+     BETA    0.80000000E+02
+  NSLICES 10
+  NTERM 3 3
+TYPE p    0.500000000E+00    0   54 bos1.p.ic     
+ POT PAIR  p     p     C01.dm
+  GAMMA 3 p     54.
+ POT EWALD 0.1554042270264 bos1.lr
+    VTAIL   -0.13253382E+00
+    PTAIL   -0.31639799E-04
+ RESTART
+ OMOVE 5 5 3
+
+\end{verbatim}
+ 
+\subsection{Porting}
+    Notes for changing to/from various computers
+
+    procedure to move to machine X
+Supported machines: C90, sun, sgi, hp rs6000, 
+
+
+
+  Edit upi.p for dimensions (number of particles etc.)
+
+
+\end{document}

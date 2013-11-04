@@ -1,0 +1,82 @@
+55,56c55,56
+<        double precision pi,rcond,z(nknots*(m+1))
+<       parameter  (pi=3.14159265359d0)
+---
+>        double precision rcond,z(nknots*(m+1)),pi
+>        parameter(pi=3.14159265359d0)
+57a58
+> 
+67c68
+< 
+---
+>  
+80,83c81,84
+<        if(rk(nk)*delta.le.20.d0*pi) then
+<            write(*,*)'ATTENTION: too many points',delta*rk(nk),nknots
+<      &,rk(nk),rad
+< 	   stop
+---
+>        if(rk(nk)*delta.le.10.d0*2.d0*pi) then
+>            write(*,*)'ATTENTION, too  points could lead to trouble'
+>            write(6,*)delta*rk(nk)
+> 	    stop
+106c107
+<        write(*,*)
+---
+> !      write(*,*)
+140c141,142
+< !       write(*,*) 'F.T. of all polynomials in all intervals completed'
+---
+>         write(*,*) 'F.T. of all polynomials in all intervals completed'
+> !       write(*,*)
+157c159,160
+< !       write(*,*) 'Matrices for the linear system generated.'
+---
+>         write(*,*) 'Matrices for the linear system generated.'
+> !       write(*,*)
+169c172
+<         write(*,*) 'Constraint on the value active.',vt0
+---
+>         write(*,*) 'Constraint on the value active.'
+178c181
+<         write(*,*) 'Constraint on the derivative active.',vt1
+---
+>         write(*,*) 'Constraint on the derivative active.'
+190d192
+<      &  ,vt0,vt1
+195c197
+<         write(*,*) 'No constraint active.'
+---
+> !       write(*,*) 'No constraint active.'
+196a199
+> !       write(*,*)
+214a218
+> !       write(*,*)
+258,262c262,265
+< !      call dpoco(aa,ld,nalc,rcond,z,info)
+<        call spofa(aa,ld,nalc,info)
+< !      write(*,*) 'RCOND = ',rcond
+< !      call dposl(aa,ld,nalc,bb)
+<        call sposl(aa,ld,nalc,bb)
+---
+>        call dpoco(aa,ld,nalc,rcond,z,info)
+>        write(*,*) 'RCOND = ',rcond
+> !       write(*,*) 
+>        call dposl(aa,ld,nalc,bb)
+267c270
+< !      call dgesv(nalc,1,aa,ld,ipiv,bb,ld,info)
+---
+>        call dgesv(nalc,1,aa,ld,ipiv,bb,ld,info)
+320c323,324
+< !       write(*,*) 'FOURIER TRANSFORM OF LONG RANGE DETERMINED'
+---
+>         write(*,*) 'FOURIER TRANSFORM OF LONG RANGE DETERMINED'
+> !       write(*,*)
+327a332
+> !      write(*,*)
+344a350
+>        write (*,*) ' vmad=',vmad
+347c353
+<        write (*,*) ' vmad=',vmad
+---
+>        return

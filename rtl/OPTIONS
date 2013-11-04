@@ -1,0 +1,2 @@
+# compiler options for  linuxrtl
+FFLAGS = -g -O3
