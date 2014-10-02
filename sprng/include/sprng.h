@@ -1,6 +1,14 @@
 #ifndef _sprng_h_
 #define _sprng_h_
 
+
+#define SPRNG_LFG   0
+#define SPRNG_LCG   1
+#define SPRNG_LCG64 2
+#define SPRNG_CMRG  3
+#define SPRNG_MLFG  4
+#define SPRNG_PMLCG 5
+
 #include "interface.h"
 
 #define SPRNG_DEFAULT 0
@@ -75,7 +83,7 @@
 #define unpack_sprng(A) addID(unpack_rng(A))
 #define isprng(A)  ((checkID(A)==NULL) ? -1 : get_rn_int(A))
 #define spawn_sprng(A,B,C) ((checkID(A)==NULL) ? 0 : spawn_rng(A,B,C,CHECK))
-#define init_sprng(A,B,C,D) addID(init_rng(A,B,C,D))
+#define init_sprng(A,B,C,D,E) addID(init_rng(A,B,C,D,E))
 #define print_sprng(A) ((checkID(A)==NULL) ? 0 : print_rng(A))
 
 #ifdef FLOAT_GEN

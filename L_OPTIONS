@@ -1,2 +1,2 @@
 # link options for  rtls/linuxrtl
-LDFLAGS = -I/home/ethan/src/squarer/sprng/SRC -L/home/ethan/src/squarer/sprng/lib -llcg64 -L/usr/lib -I/usr/include -lblas -llapack -I/home/ethan/src/squarer/linpack -L/home/ethan/src/squarer/linpack
+LDFLAGS = -I${HOME}/src/squarer/sprng/SRC -L${HOME}/src/squarer/sprng/lib -lsprng -L/usr/lib -I/usr/include -lblas -llapack -I${HOME}/src/squarer/linpack -L${HOME}/src/squarer/linpack

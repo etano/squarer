@@ -29,9 +29,21 @@
 #include <limits.h>
 #include "memory.h"
 #include "interface.h"
+#include "pmlcg.h"
 #include "gmp.h"
 #include "basic.h"
 #include <math.h>
+
+#define init_rng pmlcg_init_rng
+#define get_rn_int pmlcg_get_rn_int
+#define get_rn_flt pmlcg_get_rn_flt
+#define get_rn_dbl pmlcg_get_rn_dbl
+#define spawn_rng pmlcg_spawn_rng
+#define get_seed_rng pmlcg_get_seed_rng
+#define free_rng pmlcg_free_rng
+#define pack_rng pmlcg_pack_rng
+#define unpack_rng pmlcg_unpack_rng
+#define print_rng pmlcg_print_rng
 
 #ifdef CONVEX
 #undef _LONG_LONG  /* problems on convex compiler with 64 bit arithmetic */
@@ -66,6 +78,7 @@ int MAX_STREAMS = (1<<30); /* Maximum number of streams for initialization */
 
 struct rngen
 {
+  int rng_type;
   char *gentype;
   int stream_number;
   int nstreams;
@@ -242,10 +255,10 @@ int **initialize(int ngen, MP_INT *old_si, int seed, int param)
 /* Initialize random number stream */
 
 #ifdef __STDC__
-int *init_rng( int gennum, int total_gen,  int seed, int param)
+int *init_rng(int rng_type, int gennum, int total_gen,  int seed, int param)
 #else
-int *init_rng(gennum,total_gen,seed,param)
-int gennum,param,seed,total_gen;
+int *init_rng(rng_type,gennum,total_gen,seed,param)
+int rng_type,gennum,param,seed,total_gen;
 #endif
 {
 /*      gives back one stream (node gennum) with updated spawning         */
@@ -288,6 +301,7 @@ int gennum,param,seed,total_gen;
   free(p);
   
   /* Initiallize data structure variables */
+  genptr->rng_type = rng_type;
   genptr->gentype = GENTYPE;
   genptr->stream_number = gennum;
   genptr->nstreams = total_gen;
@@ -609,6 +623,7 @@ int *igenptr,nspawned, ***newgens, checkid;
     *newgens = (int **) genptr;
     for(i=0; i<nspawned; i++)
     {
+      genptr[i]->rng_type = tempptr->rng_type;
       genptr[i]->gentype = GENTYPE;
       genptr[i]->stream_number = tempptr->stream_number;
       genptr[i]->nstreams = tempptr->nstreams;
@@ -670,7 +685,7 @@ char **buffer;
   int pos=0;
 
   q = (struct rngen *) genptr;
-  size = sizeof(struct rngen) + q->narrays*sizeof(int) + strlen(q->gentype)+1;
+  size =  4 + sizeof(struct rngen) + q->narrays*sizeof(int) + strlen(q->gentype)+1;
   size += q->k._mp_alloc*sizeof(mp_limb_t);
   size += q->si._mp_alloc*sizeof(mp_limb_t);
   
@@ -681,11 +696,12 @@ char **buffer;
     return 0;
   }
   
+  pos += store_int(q->rng_type,4,temp_buffer+pos);
   strcpy(temp_buffer+pos,q->gentype);
   pos += strlen(q->gentype)+1;
+  
   memcpy(temp_buffer+pos,q,sizeof(struct rngen));
   pos += sizeof(struct rngen);
-  
   
   memcpy(temp_buffer+pos,q->k._mp_d,q->k._mp_alloc*sizeof(mp_limb_t));
   pos += q->k._mp_alloc*sizeof(mp_limb_t);
@@ -715,6 +731,7 @@ char *packed;
   if(q == NULL)
     return NULL;
 
+  pos += 4; /* skip rng_type */
   if(strcmp(packed+pos,GENTYPE) != 0)
   {
     fprintf(stderr,"ERROR: Unpacked ' %.24s ' instead of ' %s '\n",  
@@ -778,5 +795,3 @@ int *igen;
 }
 
 
-#include "../simple_.h"
-#include "../fwrap_.h"

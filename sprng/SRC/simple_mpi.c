@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "memory.h"
-#include "interface.h"
+#include "sprng.h"
 
 #ifndef ANSI_ARGS
 #ifdef __STDC__
@@ -40,17 +40,17 @@ int junkmpi;			/* pass useless pointer at times */
 
 #ifdef SPRNG_MPI
 #ifdef __STDC__
-int *init_rng_simple_mpi( int seed,  int mult)
+int *init_rng_simple_mpi(int rng_type, int seed,  int mult)
 #else
-int *init_rng_simple_mpi(seed,mult)
-int mult,seed;
+int *init_rng_simple_mpi(rng_type,seed,mult)
+int rng_type,mult,seed;
 #endif
 {
   int myid=0, nprocs=1, *temp;
   
   get_proc_info_mpi(&myid,&nprocs);
 
-  temp = init_rng(myid,nprocs,seed,mult);
+  temp = init_rng(rng_type,myid,nprocs,seed,mult);
 
   if(temp == NULL)
     return NULL;
@@ -71,7 +71,7 @@ int get_rn_int_simple_mpi()
 #endif
 {
   if(defaultgen == NULL)
-    if(init_rng_simple_mpi(0,0) == NULL)
+    if(init_rng_simple_mpi(DEFAULT_RNG_TYPE,0,0) == NULL)
       return -1.0;
   
   return get_rn_int(defaultgen);
@@ -85,7 +85,7 @@ float get_rn_flt_simple_mpi()
 #endif
 {
   if(defaultgen == NULL)
-    if(init_rng_simple_mpi(0,0) == NULL)
+    if(init_rng_simple_mpi(DEFAULT_RNG_TYPE,0,0) == NULL)
       return -1.0;
   
   return get_rn_flt(defaultgen);
@@ -100,7 +100,7 @@ double get_rn_dbl_simple_mpi()
 #endif
 {
   if(defaultgen == NULL)
-    if(init_rng_simple_mpi(0,0) == NULL)
+    if(init_rng_simple_mpi(DEFAULT_RNG_TYPE,0,0) == NULL)
       return -1.0;
   
   return get_rn_dbl(defaultgen);

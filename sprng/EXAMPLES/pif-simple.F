@@ -15,11 +15,18 @@ C/***************************************************************************/
        real*8 pi, error, stderror, p, EXACT_PI
        character filename*7
 
+C--- reading in a generator type
+       integer gtype
+#include "genf_types_menu.h"
+       print *,'Type in a generator type (integers: 0,1,2,3,4,5):  '
+       read *, gtype
+C---
+
        EXACT_PI = 3.141592653589793238462643
        p = EXACT_PI/4.0
        
 C-- initialization: to initialize n, in_old, n_old, and filename
-       call initialize(n, in_old, n_old, filename)
+       call initialize_function(gtype, n, in_old, n_old, filename)
          
       in = count_in_circle(n)         ! count samples in circle
       in = in + in_old                ! # in circle, in all runs 
@@ -58,9 +65,12 @@ C-- count # of samples in cirlce
       end
 
 C-- initialization --
-      subroutine initialize(n, in_old, n_old, filename)
+      subroutine initialize_function(gtype, n, in_old, n_old, filename)
       implicit none
 #include "sprng_f.h"
+C---   
+       integer gtype
+C---
 
       integer n, in_old, n_old, seed, size, junk
       SPRNG_POINTER junkPtr
@@ -78,7 +88,8 @@ C-- initialization --
 
       if (firstChar .eq. '9') then    ! new set of runs
          seed = make_sprng_seed() ! make seed from date/time information 
-         junkPtr = init_sprng(seed, CRAYLCG) ! initialize stream   
+         junkPtr = init_sprng(gtype, seed, CRAYLCG) ! initialize
+                                                               ! stream   
          junk = print_sprng()
          in_old = 0
          n_old = 0

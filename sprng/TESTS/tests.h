@@ -2,7 +2,9 @@
 #define _tests_h
 #include "util.h"
 
-#define N_STREAM_PARAM 6
+/*--- increase the macro N_STREAM_PARAM by 1 ---*/
+/*--- adding rng_type as the 1st argument    ---*/
+#define N_STREAM_PARAM 7
 
 #ifndef ANSI_ARGS
 #ifdef __STDC__

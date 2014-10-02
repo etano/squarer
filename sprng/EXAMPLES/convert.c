@@ -10,7 +10,7 @@
 /***************************************************************************/
 
 #include <stdio.h>
- 
+#define CONVERT        /* used to set on the macro 'myrandom --> sprng'    */ 
 #ifdef CONVERT
 #define SIMPLE_SPRNG		/* simple interface                        */
 #include "sprng.h"              /* SPRNG header file                       */
@@ -26,11 +26,17 @@ main()
 {
   int seed, i;
   double rn;
+  int gtype;  /*---    */
 
 #ifdef CONVERT
+  /*--- reading in a generator type */
+#include "gen_types_menu.h"
+  printf("Type in a generator type (integers: 0,1,2,3,4,5):  ");
+  scanf("%d", &gtype);
+
   /************************** Initialization *******************************/
   /******* We add the following optional initialization lines **************/
-  init_sprng(SEED,SPRNG_DEFAULT);     /* initialize stream                       */
+  init_sprng(gtype,SEED,SPRNG_DEFAULT);  /* initialize stream   */
   printf("Print information about random number stream:\n");
   print_sprng();	
 #else

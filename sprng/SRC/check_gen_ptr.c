@@ -1,3 +1,9 @@
+/*--- Chris S.: June 1999  */
+/*--- reads in, first an integer as a generator type and next elements from */
+/*--- a data file */
+/*--- checking C interface with pointer checking                       ---*/
+/*--- added 'int gtype' 'scanf("%d\n",  @gtype)' and gtype to all init_sprng*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,6 +28,8 @@
 
 #define diff(a,b) (((a)>(b))?((a)-(b)):((b)-(a)))
 
+int gtype; /*--- adding generator type ---*/
+
 #ifdef __STDC__
 void ignore(char *s, ...)
 #else
@@ -43,9 +51,9 @@ int check_gen()			/* Check generator with correct parameters   */
   
   ngens = 3;
   seed = 985456376;
-  gen1 = init_sprng(0,ngens,seed,PARAM); /* initiallize generators           */
-  gen2 = init_sprng(1,ngens,seed,PARAM);
-  gen3 = init_sprng(2,ngens,seed,PARAM);
+  gen1 = init_sprng(gtype,0,ngens,seed,PARAM); /* initiallize generators           */
+  gen2 = init_sprng(gtype,1,ngens,seed,PARAM);
+  gen3 = init_sprng(gtype,2,ngens,seed,PARAM);
   
   /* ____________________ Check arithmetic ___________________________       */
 
@@ -205,7 +213,7 @@ int check_errors()
 
   correct = YES;
   fprintf(stderr,"Expect SPRNG WARNING: ngens <= 0.\n");
-  gen1 = init_sprng(0,0,seed,PARAM);
+  gen1 = init_sprng(gtype,0,0,seed,PARAM);
   for(i=0; i<50; i++)	 /* ngens should be reset to 1   */
   {
     scanf("%d\n", &tempi);
@@ -231,7 +239,7 @@ int check_errors()
 
   correct = YES;
   fprintf(stderr,"Expect SPRNG ERROR: gennum not in range\n");
-  gen1 = init_sprng(-1,1,seed,PARAM); /* negative gennum */
+  gen1 = init_sprng(gtype,-1,1,seed,PARAM); /* negative gennum */
   if(gen1 != NULL)
   {
     free_sprng(gen1);
@@ -239,7 +247,7 @@ int check_errors()
   }
   
   fprintf(stderr,"Expect SPRNG ERROR: gennum not in range\n");
-  gen1 = init_sprng(2,1,seed,PARAM); /* gennum >= ngens */
+  gen1 = init_sprng(gtype,2,1,seed,PARAM); /* gennum >= ngens */
   if(gen1 != NULL)
   {
     free_sprng(gen1);
@@ -257,7 +265,7 @@ int check_errors()
 
   correct = YES;
   fprintf(stderr,"Expect SPRNG WARNING: Invalid parameter\n");
-  gen1 = init_sprng(0,1,seed,1<<30);
+  gen1 = init_sprng(gtype,0,1,seed,1<<30);
   for(i=0; i<50; i++)		/* check if default parameter is used ...    */
   {				/* ... when an invalid parameter is passed.  */
     scanf("%d\n", &tempi);
@@ -488,6 +496,9 @@ char *argv[];
     printf("\nERROR: make_sprng_seed does not return unique seeds\n");
   }
 #endif
+
+  scanf("%d\n", &gtype);  /*--- reading in a generator type */
+
   if(check_gen() != YES)
     result = NO;
 

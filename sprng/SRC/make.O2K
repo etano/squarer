@@ -26,25 +26,24 @@ MPICC = $(CC)
 # Also, if the previous compilation was without MPI, type: make realclean
 # before compiling for mpi.
 #
-#MPIDEF = -DSPRNG_MPI #Only if you plan to use MPI
 #MPIDIR = 
 #MPILIB = -lmpi
 
 # 32 bit compilation
 
-#CFLAGS = -O3 -D$(PLAT) $(MPIDEF) -mips4 -D_LONG_LONG -n32 # 32 bit compilation
+#CFLAGS = -O3 -D$(PLAT) $(PMLCGDEF) $(MPIDEF) -mips4 -D_LONG_LONG -n32 # 32 bit compilation
 #CLDFLAGS =  -O3 -n32 # 32 bit compilation
 #FFLAGS = -O3 -n32  #32 bit compilation
-#F77LDFLAGS =  -O3 -n32  $(MPIDEF) -mips4 # 32 bit compilation
+#F77LDFLAGS =  -O3 -n32  $(PMLCGDEF) $(MPIDEF) -mips4 # 32 bit compilation
 #CPP = cc -E -P $(MPIDEF) -D_LONG_LONG # 32 bit compilation
 
 
 # 64 bit compilation
 #
 
-CFLAGS =  -O3 -D$(PLAT) $(MPIDEF) -D_LONG_LONG -align64 -64  
+CFLAGS =  -O3 -D$(PLAT) $(PMLCGDEF) $(MPIDEF) -D_LONG_LONG -align64 -64  
 CLDFLAGS =  -O3 -align64 -64 # 64 bit compilation
-FFLAGS = -O3 -align64   $(MPIDEF)  -DPOINTER_SIZE=8 -D_LONG_LONG -64 #64 bit compilation
+FFLAGS = -O3 -align64  $(PMLCGDEF)  $(MPIDEF)  -DPOINTER_SIZE=8 -D_LONG_LONG -64 #64 bit compilation
 F77LDFLAGS =  -O3 -align64 -64  # 64 bit compilation
 CPP = cc -E -P   $(MPIDEF)  -DPOINTER_SIZE=8 -D_LONG_LONG # 64 bit compilation
 

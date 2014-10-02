@@ -39,7 +39,7 @@ TESTLIB = sprngtest
 # modulus LCG, and mlfg for the multiplicative lagged Fibonacci
 # generator respectively.
 
-LIBLIST = cmrg
+LIBLIST = sprng
 
 # To create a new test 'xxx', place the source code in file 'xxx.c`
 # Then append 'xxx' to TESTLIST below. This assumes that 'xxx.c'

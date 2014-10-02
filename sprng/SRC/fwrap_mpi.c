@@ -42,13 +42,13 @@ int FNAMEOF_fseed_mpi()
 #ifdef SPRNG_MPI
 
 #ifdef __STDC__
-int * FNAMEOF_finit_rng_simmpi( int *seed, int *mult)
+int * FNAMEOF_finit_rng_simmpi(int *rng_type, int *seed, int *mult)
 #else
-int * FNAMEOF_finit_rng_simmpi(seed,mult)
-int *mult,*seed;
+int * FNAMEOF_finit_rng_simmpi(rng_type,seed,mult)
+int *rng_type,*mult,*seed;
 #endif
 {
-	return init_rng_simple_mpi(*seed, *mult);
+	return init_rng_simple_mpi(*rng_type,*seed, *mult);
 }
 
 #ifdef __STDC__

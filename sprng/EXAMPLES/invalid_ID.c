@@ -22,6 +22,13 @@ main()
   int streamnum, nstreams, *stream;
   double rn;
   int i;
+  int gtype;  /*---    */
+
+
+  /*--- reading in a generator type */
+#include "gen_types_menu.h"
+  printf("Type in a generator type (integers: 0,1,2,3,4,5):  ");
+  scanf("%d", &gtype);
 
 
 
@@ -29,7 +36,7 @@ main()
   streamnum = 0;
   nstreams = 1;
 
-  stream = init_sprng(streamnum,nstreams,SEED,SPRNG_DEFAULT); /*initialize stream */
+  stream = init_sprng(gtype,streamnum,nstreams,SEED,SPRNG_DEFAULT); /*initialize stream */
   printf("Print information about random number stream:\n");
   print_sprng(stream);
 

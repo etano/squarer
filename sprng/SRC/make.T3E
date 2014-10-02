@@ -19,16 +19,15 @@ MPICC = $(CC)
 # Also, if the previous compilation was without MPI, type: make realclean
 # before compiling for mpi.
 #
-#MPIDEF = -DSPRNG_MPI #Only if you plan to use MPI
 # The mpt module automatically links MPI library
 MPIDIR =  
 MPILIB =  
 
 
 
-CFLAGS = -O3 -D$(PLAT) $(MPIDEF)
+CFLAGS = -O3 -D$(PLAT) $(PMLCGDEF) $(MPIDEF)
 CLDFLAGS =  -O3 
-FFLAGS = -F -O3 $(MPIDEF) -D$(PLAT)  -DPOINTER_SIZE=8
+FFLAGS = -F -O3 $(PMLCGDEF) $(MPIDEF) -D$(PLAT)  -DPOINTER_SIZE=8
 F77LDFLAGS = -O3 
 
 CPP = f90 -e P -F 

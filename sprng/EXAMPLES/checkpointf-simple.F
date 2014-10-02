@@ -21,6 +21,12 @@ C
        character buffer1(MAX_PACKED_LENGTH), buffer2(MAX_PACKED_LENGTH)
        character outfile*7, infile*7, firstChar*1
 
+C--- reading in a generator type
+       integer gtype
+#include "genf_types_menu.h"
+       print *,'Type in a generator type (integers: 0,1,2,3,4,5):  '
+       read *, gtype
+C---
        seed = 985456376
 
 C/*********************** Initialize streams *******************************/
@@ -39,7 +45,7 @@ C===========================================
  113   format(A1)
 
        if (firstChar .eq. '9') then  ! initialize stream the first time  
-          stream = init_sprng(seed,SPRNG_DEFAULT)
+          stream = init_sprng(gtype,seed,SPRNG_DEFAULT)
        else                          ! read stream state from the old file
           open(30, file =infile , status = 'old', form = 'unformatted')
           read(30) size

@@ -27,6 +27,7 @@ static int init_seed, init_param, init_total;
 static int current_subsequence;
 static long current_group, first_group, init_ngroups;
 static int **gens, current_gen, n_combine, skip;
+static int rng_type; /*--- random number type ---*/
 
 long init_streams ANSI_ARGS((int argc, char *argv[]));
 void next_stream ANSI_ARGS((void));
@@ -66,24 +67,36 @@ char *argv[];
   MPI_Init(&argc, &argv);
 #endif
 
-  if(argc < 6+1)
+/*-----------------------------------------------------------------------*/
+/* Changed by Yaohang Li to fit for the new interface                    */
+/* Adding the rng_type to standard init_sprng interface                  */
+/* The Number of the arguments increases by 1                            */
+/*-----------------------------------------------------------------------*/
+  if(argc < 7+1)
   {
     fprintf(stderr,"Usage: %s n_sets ncombine seed param nsubsequences skip test_arguments\n",
 	    argv[0]);
     exit(-1);
   }
-  
-  if(atoi(argv[2]) <= 0)
+   
+  if (atoi(argv[1])>5||atoi(argv[1])<0)
   {
-    fprintf(stderr,"Error: Second command line argument should be greater than 0\n");
+    fprintf(stderr,"Error: First command line argument(random number type) should be between 0 to 5\n");
+    exit(-1);
+  }
+
+  if(atoi(argv[3]) <= 0)
+  {
+    fprintf(stderr,"Error: Third command line argument should be greater than 0\n");
     exit(-1);
   }
   
-  if(atoi(argv[5]) <= 0)
+  if(atoi(argv[6]) <= 0)
   {
-    fprintf(stderr,"Error: Fifth command line argument should be greater than 0\n");
+    fprintf(stderr,"Error: Sixth command line argument should be greater than 0\n");
     exit(-1);
   }
+/*-------------- End by changing ------------------------------*/
   
   n = init_streams(argc, argv);
   
@@ -99,16 +112,21 @@ int argc;
 char *argv[];
 #endif
 {
+/*------------------------------------------------------------*/
+/* Modify by Yaohang Li                                       */
+/* Adding rng_type as a new argument                          */
+/*------------------------------------------------------------*/
   int seed, param, n, i, j;
   int myid = 0, nprocs = 1;
   long k;
   
-  n = atoi(argv[1]);
-  n_combine = atoi(argv[2]);
-  seed = atoi(argv[3]);
-  param = atoi(argv[4]);
-  nsubsequences = atoi(argv[5]);
-  skip = atoi(argv[6]);
+  rng_type = atoi(argv[1]); /*--- Get the rand type by reading the 1 arg ---*/
+  n = atoi(argv[2]);
+  n_combine = atoi(argv[3]);
+  seed = atoi(argv[4]);
+  param = atoi(argv[5]);
+  nsubsequences = atoi(argv[6]);
+  skip = atoi(argv[7]);
   
 #ifdef SPRNG_MPI
   MPI_Comm_rank(MPI_COMM_WORLD, &myid);
@@ -134,7 +152,7 @@ char *argv[];
   
   gens = (int **) mymalloc(n_combine*sizeof(int *));
   for(i=0; i<n_combine; i++)
-    gens[i] = init_sprng(n_combine*current_group+i+OFFSET,n_combine*n+OFFSET,seed,init_param);
+    gens[i] = init_sprng(rng_type, n_combine*current_group+i+OFFSET,n_combine*n+OFFSET,seed,init_param); /*--- adding rng_type as the first argument ---*/
   
   init_ngroups = n*(myid+1)/nprocs - n*myid/nprocs;
   
@@ -167,8 +185,7 @@ void next_stream()
 
     if(current_group > first_group && current_group < first_group+init_ngroups)
       for(i=0; i<n_combine; i++)
-	gens[i] = init_sprng(n_combine*current_group+i+OFFSET,n_combine*init_total+OFFSET,
-			     init_seed, init_param);
+	gens[i] = init_sprng(rng_type, n_combine*current_group+i+OFFSET,n_combine*init_total+OFFSET,init_seed, init_param);/*--- add rng_type as the 1st parameter---*/
     else if(current_group > first_group && current_group >
 	    first_group+init_ngroups)
       printf("ERROR: current_pair = %ld not in allowed range [%d,%ld]\n",
@@ -205,7 +222,8 @@ char *argv[];
   int n, i, j, length;
 
   n = init_tests(argc,argv);
-  length = atoi(argv[7]);
+  /*--- increase argv index by 1 ---*/
+  length = atoi(argv[8]);
   
   for(i=0; i<n; i++)
   {

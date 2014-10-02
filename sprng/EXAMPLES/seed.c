@@ -15,9 +15,20 @@ main()
 {
   int streamnum, nstreams, seed, *stream, i;
   double rn;
+  int j;
+  int gtype;  /*---    */
 
 
+  /*--- reading in a generator type */
+#include "gen_types_menu.h"
+  printf("Type in a generator type (integers: 0,1,2,3,4,5):  ");
+  scanf("%d", &gtype);
+ 
+/*  int rng_type_ary[] = {SPRNG_LFG, SPRNG_LCG, SPRNG_LCG64, SPRNG_CMRG,\
+	        SPRNG_MLFG, SPRNG_PMLCG};
 
+for(j = 0; j < 6; j++){
+*/
   /************************** Initialization *******************************/
 
   streamnum = 0;
@@ -25,7 +36,8 @@ main()
 
   seed = make_sprng_seed();	/* make new seed each time program is run  */
 
-  stream = init_sprng(streamnum,nstreams,seed,SPRNG_DEFAULT); /*initialize stream*/
+  stream = init_sprng(gtype, \
+		  streamnum,nstreams,seed,SPRNG_DEFAULT); /*initialize stream*/
   printf(" Printing information about new stream\n");
   print_sprng(stream);
 
@@ -39,4 +51,7 @@ main()
   }
 
   free_sprng(stream);		/* free memory used to store stream state  */
+/*
+}
+*/
 }

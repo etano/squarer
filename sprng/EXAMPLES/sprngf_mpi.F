@@ -16,7 +16,9 @@ C #define CHECK_POINTERS
        SPRNG_POINTER stream
        real*8 rn
        integer i, myid, nprocs, ierror, junk
-
+C---
+       integer gtype
+C--- 
       call MPI_INIT(ierror)
 
       call MPI_COMM_SIZE(MPI_COMM_WORLD, nprocs, ierror)
@@ -27,8 +29,16 @@ C #define CHECK_POINTERS
        streamnum = myid
        nstreams = nprocs
        seed = 985456376
+C--- node 0 is reading in a generator type
+       if (myid .eq. 0) then
+#include "genf_types_menu.h"
+         print *,'Type in a generator type (integers: 0,1,2,3,4,5):  '
+         read *, gtype
+       endif
+       call MPI_BCAST(gtype,1, MPI_INTEGER,0,MPI_COMM_WORLD,ierror)
+C--- 
 C 
-       stream = init_sprng(streamnum,nstreams,seed,SPRNG_DEFAULT)
+      stream = init_sprng(gtype,streamnum,nstreams,seed,SPRNG_DEFAULT)
        write(*,"('Process', i2, ', print information about stream:')")
      &       myid
        junk = print_sprng(stream)

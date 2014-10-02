@@ -1,1 +1,0 @@
-../lcg64/primes.c

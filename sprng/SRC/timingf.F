@@ -1,4 +1,7 @@
-      
+C--- 8 June 1999 Chris S.  modified to read a file with the first argument
+C--- being a generator type
+C--- added 'integer gentype' 
+C--- added 'Reading in a generator type' and   'read *, gentype'
 #define PARAM 0
 #define TIMING_TRIAL_SIZE 1000000
 
@@ -12,11 +15,10 @@
 #define SPRNG_POINTER integer*4
 #endif
 
-
         program test_generator
 
 	implicit none
-
+	integer gentype
         external finit_rng, fget_rn_int, fget_rn_flt, fget_rn_dbl
         external fcpu_t
 
@@ -29,8 +31,12 @@
         SPRNG_POINTER gen
         real*8 temp1, temp2, temp3, temp4
         real*8 temp_mult
+C--- Reading in a generator type
+        read *, gentype
+
         temp_mult =  TIMING_TRIAL_SIZE/1.0e6
-        gen = finit_rng(0,1,0,PARAM)
+        gen = finit_rng(gentype,0,1,0,PARAM)
+	
         temp1 = fcpu_t()
 
         do 100 i = 1,TIMING_TRIAL_SIZE

@@ -8,13 +8,18 @@ C                Demonstrates the use of sprng in subroutines
 
        integer streamnum, nstreams, seed,junk
        SPRNG_POINTER stream
-
+C--- reading in a generator type
+       integer gtype
+#include "genf_types_menu.h"
+       print *,'Type in a generator type (integers: 0,1,2,3,4,5):  '
+       read *, gtype
+C--- 
        streamnum = 0
        nstreams = 1
        seed = 985456376
 
 C   initialize stream 
-       stream = init_sprng(streamnum,nstreams,seed,SPRNG_DEFAULT)
+       stream = init_sprng(gtype,streamnum,nstreams,seed,SPRNG_DEFAULT)
        print *, 'Printing information about new stream'
        junk = print_sprng(stream)
 

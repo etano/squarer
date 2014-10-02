@@ -10,7 +10,7 @@ include C_OPTIONS
 include L_OPTIONS
 #
 
-default : Nsprng $(ENV) Nrtl Nforsub Nfnlib Nsqdir C_OPTIONS
+default : Nlinpack Nsprng $(ENV) Nrtl Nforsub Nfnlib Nsqdir C_OPTIONS
 
 # machconfig change C_OPTIONS files so that it enforces
 #            to recompile all files. 
@@ -18,6 +18,9 @@ default : Nsprng $(ENV) Nrtl Nforsub Nfnlib Nsqdir C_OPTIONS
 #            The link between rtl and {machine}rtl is now in machconfig
 $(ENV) : 
 	(machconfig) 
+
+Nlinpack :
+	( cd linpack ; sh compile.sh )
 
 Nsprng :
 	( cd sprng ; make )
@@ -35,6 +38,7 @@ Nsqdir : sqdir C_OPTIONS
 	( cd sqdir ; make squarer ; make potgen_lr ; make potgen_sr )
 
 clean : 
+	(cd linpack; rm *.o *.a)
 	(cd sprng; make clean)
 	(cd fnlib; make clean)
 	(cd sqdir; make clean)

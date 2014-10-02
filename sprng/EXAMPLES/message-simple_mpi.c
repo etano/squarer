@@ -23,25 +23,34 @@ main(int argc, char *argv[])
   int i, myid, len, nprocs;
   MPI_Status  status;
   char *packed;
-
+  int gtype;  /*---    */
 
   /************************** MPI calls ************************************/
             
   MPI_Init(&argc, &argv);	/* Initialize MPI                          */
   MPI_Comm_rank(MPI_COMM_WORLD, &myid);	/* find process id                 */
   MPI_Comm_size(MPI_COMM_WORLD, &nprocs); /* find number of processes      */
-
+  
   if(nprocs < 2)
   {
     fprintf(stderr,"ERROR: At least 2 processes required\n");
     MPI_Finalize();
     exit(1);
   }
-  
+   
+  /*--- node 0 is reading in a generator type */
+  if(myid == 0)
+  {
+#include "gen_types_menu.h"
+    printf("Type in a generator type (integers: 0,1,2,3,4,5):  ");
+    scanf("%d", &gtype);
+  }
+  MPI_Bcast(&gtype,1,MPI_INT,0,MPI_COMM_WORLD ); /*--- broadcast gen type  */
+
   if (myid==0)	/*********** process 0 sends stream to process 1 ***********/
   {
-    init_sprng(SEED,SPRNG_DEFAULT);	/*initialize stream                        */
-    printf("Process %d: Print information about stream:\n",myid);
+    init_sprng(gtype,SEED,SPRNG_DEFAULT);  /*initialize stream             */
+    printf("\n\nProcess %d: Print information about stream:\n",myid);
     print_sprng();
 
     printf("Process %d: Print 2 random numbers in [0,1):\n", myid);
@@ -60,7 +69,7 @@ main(int argc, char *argv[])
   }
   else if(myid == 1)  /****** process 1 receives stream from process 0 *****/
   {
-    init_sprng(SEED,SPRNG_DEFAULT);   /*initialize stream                        */
+    init_sprng(gtype,SEED,SPRNG_DEFAULT);   /*initialize stream            */
     MPI_Recv(&len, 1, MPI_INT, 0, MPI_ANY_TAG,
              MPI_COMM_WORLD, &status); /* receive buffer size required     */
     

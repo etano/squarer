@@ -1,3 +1,9 @@
+/*--- Chris S.: June 1999  */
+/*--- reads in, first an integer as a generator type and next elements from */
+/*--- a data file */
+/*--- checking Default C interface                                        ---*/
+/*--- added 'int gtype' 'scanf("%d\n",  @gtype)' and gtype to all init_sprng */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,6 +27,8 @@
 #define YES 1
 #define NO 0
 
+int gtype; /*--- adding generator type ---*/ 
+
 #ifdef __STDC__
 void ignore(char *s, ...)
 #else
@@ -40,7 +48,7 @@ int check_gen()			/* Check generator with correct parameters   */
   double tempd;
   
   seed = 985456376;
-  gen = init_sprng(seed,PARAM); /* initialize generator                     */
+  gen = init_sprng(gtype,seed,PARAM); /* initialize generator                */
   if(gen == NULL)
   {
     result = NO;
@@ -264,6 +272,7 @@ char *argv[];
     result = NO;
     printf("\nERROR: make_sprng_seed does not return unique seeds\n");
   }
+  scanf("%d\n", &gtype);  /* reading in a generator type */
   
   if(check_gen() != YES)
     result = NO;

@@ -1,3 +1,6 @@
+C/* new_spring version  5/25/99 Chris S.  List of changes: 1 of 1           */
+C/* adding readin in of a generator type */
+
 C/****************************************************************************/
 C/*                ____Demonstrates checkpointing____                        */
 C/* In a new run, this program initializes a random number stream and prints */
@@ -23,6 +26,13 @@ C #define CHECK_POINTERS
        character buffer1(MAX_PACKED_LENGTH), buffer2(MAX_PACKED_LENGTH)
        character outfile*7, infile*7, firstChar*1
 
+C--- reading in a generator type
+       integer gtype
+#include "genf_types_menu.h"
+       print *,'Type in a generator type (integers: 0,1,2,3,4,5):  '
+       read *, gtype
+C---
+
        streamnum = 0
        nstreams = 1
        seed = 985456376
@@ -43,7 +53,7 @@ C===========================================
  113   format(A1)
 
        if (firstChar .eq. '9') then  ! initialize stream the first time  
-          stream = init_sprng(streamnum,nstreams,seed,SPRNG_DEFAULT)
+       stream = init_sprng(gtype,streamnum,nstreams,seed,SPRNG_DEFAULT)
        else                          ! read stream state from the old file
           open(30, file =infile , status = 'old', form = 'unformatted')
           read(30) size

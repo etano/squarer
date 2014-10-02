@@ -16,6 +16,9 @@ C and prints a few random numbers from this stream.
        SPRNG_POINTER junkPtr
        real*8 rn
        integer packed(MAX_PACKED_LENGTH)
+C---
+       integer gtype
+C---
 
       call MPI_INIT(ierror)
       call MPI_COMM_SIZE(MPI_COMM_WORLD, nprocs, ierror)
@@ -26,10 +29,17 @@ C and prints a few random numbers from this stream.
           call MPI_FINALIZE(ierror)
           call exit(1)
        endif
-
+C--- node 0 is reading in a generator type
+       if (myid .eq. 0) then
+#include "genf_types_menu.h"
+         print *,'Type in a generator type (integers: 0,1,2,3,4,5):  '
+         read *, gtype
+       endif
+       call MPI_BCAST(gtype,1, MPI_INTEGER,0,MPI_COMM_WORLD,ierror)
+C---
        seed = 985456376
        if (myid .eq. 0) then
-          junkPtr = init_sprng(seed,SPRNG_DEFAULT)
+          junkPtr = init_sprng(gtype,seed,SPRNG_DEFAULT)
           write(6,"('Process',i2,': Print information about stream:')")
      &              myid
           junk = print_sprng()
@@ -51,7 +61,7 @@ C and prints a few random numbers from this stream.
           print*, 'Process 0 sends stream to process 1'
        
        elseif (myid .eq. 1) then
-          junkPtr = init_sprng(seed,SPRNG_DEFAULT)
+          junkPtr = init_sprng(gtype,seed,SPRNG_DEFAULT)
           call MPI_RECV(len, 1, MPI_INTEGER, 0, MPI_ANY_TAG, 
      &                  MPI_COMM_WORLD,status, ierror)
           call MPI_RECV(packed, len, MPI_INTEGER, 0, MPI_ANY_TAG,

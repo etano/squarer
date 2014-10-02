@@ -29,8 +29,24 @@
 #include <assert.h>
 #include "memory.h"
 #include "interface.h"
-#include "primes.h"
+#include "lcg64.h"
+#include "primes_64.h"
 #include "store.h"
+
+#define init_rng lcg64_init_rng
+#define get_rn_int lcg64_get_rn_int
+#define get_rn_flt lcg64_get_rn_flt
+#define get_rn_dbl lcg64_get_rn_dbl
+#define spawn_rng lcg64_spawn_rng
+#define get_seed_rng lcg64_get_seed_rng
+#define free_rng lcg64_free_rng
+#define pack_rng lcg64_pack_rng
+#define unpack_rng lcg64_unpack_rng
+#define print_rng lcg64_print_rng
+
+#define MAX_STREAMS lcg64_MAX_STREAMS
+#define NGENS lcg64_NGENS
+#define PARAMLIST lcg64_PARAMLIST
 
 #define VERSION "00"
 /*** Name for Generator ***/
@@ -67,6 +83,7 @@ unsigned int PARAMLIST[NPARAMS][2] = {{0x87b0b0fdU, 0x27bb2ee6U},
 /*** Change this to the type of generator you are implementing ***/
 struct rngen
 {
+  int rng_type;
   char *gentype;
   int stream_number;
   int nstreams;
@@ -112,11 +129,11 @@ int NGENS=0;		  /* number of random streams in current process */
 /* Initialize random number stream */
 
 #ifdef __STDC__
-int *init_rng( int gennum, int total_gen,  int seed, 
+int *init_rng(int rng_type, int gennum, int total_gen,  int seed, 
 	       int param)
 #else
-int *init_rng(gennum,total_gen,seed,param)
-int gennum,param,seed,total_gen;
+int *init_rng(rng_type,gennum,total_gen,seed,param)
+int rng_type,gennum,param,seed,total_gen;
 #endif
 {
 /*      gives back one stream (node gennum) with updated spawning         */
@@ -153,6 +170,7 @@ int gennum,param,seed,total_gen;
     return NULL;
   
   /* Initiallize data structure variables */
+  genptr->rng_type = rng_type;
   genptr->gentype = GENTYPE;
   genptr->stream_number = gennum;
   genptr->nstreams = total_gen;
@@ -189,7 +207,7 @@ int gennum,param,seed,total_gen;
   
   /*** Add initialization statements for your data in the arrays and other 
     variables you have defined ***/
-  getprime(1,&genptr->prime,gennum);
+  getprime_64(1,&genptr->prime,gennum);
 #ifdef LONG64
   genptr->multiplier = ((unsigned LONG64) PARAMLIST[param][1])<<32 |
     ((unsigned LONG64) PARAMLIST[param][0]);
@@ -384,7 +402,7 @@ int *igenptr,nspawned, ***newgens, checkid;
        But we will correct it below. */
 
     genptr[i] = (struct rngen *) 
-      init_rng(gennum, gennum+1, seed, tempptr->parameter);
+      init_rng(tempptr->rng_type,gennum, gennum+1, seed, tempptr->parameter);
     
   
     if(genptr[i] == NULL)	/* Was generator initiallized? */
@@ -455,7 +473,7 @@ char **buffer;
   struct rngen *q;
 
   q = (struct rngen *) genptr;
-  size = 48 + strlen(q->gentype)+1;
+  size = 4 + 48 + strlen(q->gentype)+1;
   
   initp = p = (unsigned char *) mymalloc(size); /* allocate memory */
   /* The new load/store routines make using sizeof unnecessary. Infact, */
@@ -467,6 +485,7 @@ char **buffer;
   }
   
   
+  p += store_int(q->rng_type,4,p);
   strcpy((char *)p,q->gentype);
   p += strlen(q->gentype)+1;
   p += store_int(q->stream_number,4,p);
@@ -512,6 +531,7 @@ char *packed;
   if(q == NULL)
     return NULL;
 
+  p += load_int(p,4,(unsigned int *)&q->rng_type);
   if(strcmp((char *)p,GENTYPE) != 0)
   {
     fprintf(stderr,"ERROR: Unpacked ' %.24s ' instead of ' %s '\n",  
@@ -583,5 +603,3 @@ int *igen;
   return 1;
 }
 
-#include "../simple_.h"
-#include "../fwrap_.h"

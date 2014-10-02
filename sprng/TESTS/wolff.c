@@ -198,8 +198,9 @@ void wolff(int block_size, int use_blocks)
       compute(old_row);
 }
 
-
-void initialize(int seed, int param, int use_blocks)
+/*--- in order not to duplicate with initialize ---*/
+/*--- change from initialize() to minitialize() ---*/
+void minitialize(int rng_type, int seed, int param, int use_blocks)
 {
   int i, j, temp;
   
@@ -234,11 +235,11 @@ void initialize(int seed, int param, int use_blocks)
   
   /* initialize generator */
   genptr = (int **) malloc(nsites*sizeof(int *));
-  genptr[0] = init_sprng(0,nsites,seed,param); 
+  genptr[0] = init_sprng(rng_type,0,nsites,seed,param); /*--- add rng_type ---*/
   print_sprng(genptr[0]);
   for(i=1; i<nsites; i++)
 #ifdef PARALLEL
-    genptr[i]=init_sprng(i,nsites,seed,param);
+    genptr[i]=init_sprng(rng_type,i,nsites,seed,param); /*--- add rng_type ---*/
 #else
     genptr[i]=genptr[0]; 
 #endif
@@ -310,12 +311,15 @@ void thermalize(int block_size, int discard_blocks)
 
 void main(int argc, char **argv)
 {
+  /*--- Add rng_type as the argument to the new interface ---*/
+  int rng_type;
   int seed, param, block_size, discard_blocks, use_blocks;
   
   /****************** Read and check Arguments ********************/
-  if(argc==7 )
+  if(argc==8 ) /*--- increase argc by 1 ---*/
   {
     argv++;
+    rng_type = atoi(*argv++); /*--- get rng_type ---*/
     seed = atoi(*argv++);
     param = atoi(*argv++);
     lattice_size = atoi(*argv++);
@@ -332,12 +336,12 @@ void main(int argc, char **argv)
   }
   else
   {
-    printf("USAGE: %s seed param lattice_size block_size discard_blocks use_blocks\n", argv[0]);
+    printf("USAGE: %s rng_type seed param lattice_size block_size discard_blocks use_blocks\n", argv[0]);
     exit(-1);
   }
 
 
-  initialize(seed, param, use_blocks); /* initalize data  */
+  minitialize(rng_type, seed, param, use_blocks); /* initalize data  */
   
 
   /************** 'Thermalize' system so that results are not influenced

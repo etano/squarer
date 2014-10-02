@@ -15,11 +15,18 @@ main()
 {
   int i, seed;
   double rn;
+  int gtype;  /*---    */
+
+
+  /*--- reading in a generator type */
+#include "gen_types_menu.h"
+  printf("Type in a generator type (integers: 0,1,2,3,4,5):  ");
+  scanf("%d", &gtype);
 
 
   seed = make_sprng_seed();	/* make new seed each time program is run   */
 
-  init_sprng(seed,SPRNG_DEFAULT);	/* initialize stream                        */
+  init_sprng(gtype,seed,SPRNG_DEFAULT);	/* initialize stream                        */
   printf(" Printing information about new stream\n");
   print_sprng();
 

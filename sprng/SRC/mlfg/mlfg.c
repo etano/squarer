@@ -29,7 +29,24 @@
 #include <assert.h>
 #include "memory.h"
 #include "interface.h"
+#include "mlfg.h"
 #include "int64.h"
+
+#define init_rng mlfg_init_rng
+#define get_rn_int mlfg_get_rn_int
+#define get_rn_flt mlfg_get_rn_flt
+#define get_rn_dbl mlfg_get_rn_dbl
+#define spawn_rng mlfg_spawn_rng
+#define get_seed_rng mlfg_get_seed_rng
+#define free_rng mlfg_free_rng
+#define pack_rng mlfg_pack_rng
+#define unpack_rng mlfg_unpack_rng
+#define print_rng mlfg_print_rng
+
+#define MAX_STREAMS mlfg_MAX_STREAMS
+#define NGENS mlfg_NGENS
+#define valid mlfg_valid
+
 
 #define VERSION "00"
 /*** Name for Generator ***/
@@ -40,6 +57,7 @@ int MAX_STREAMS = 0x7fffffff;  /* Maximum number streams to init_sprng */
 
 struct rngen
 {
+  int rng_type;
   char *gentype;
   int stream_number;
   int nstreams;
@@ -288,7 +306,7 @@ static void findseed(int sign, uint64 n, uint64 *ui)
 
 
 
-static struct rngen **initialize(int ngen, int param, unsigned int seed, 
+static struct rngen **initialize(int rng_type, int ngen, int param, unsigned int seed, 
 				 uint64 *nstart, unsigned int initseed)
 {
   int i,j,k,l,m,*order, length;
@@ -308,6 +326,7 @@ static struct rngen **initialize(int ngen, int param, unsigned int seed,
     if (q[i] == NULL) 
       return NULL;
 
+    q[i]->rng_type = rng_type;
     q[i]->hptr = 0;   /* This is reset to lval-1 before first iteration */
     q[i]->si = (uint64 *) mymalloc((length-1)*sizeof(uint64));
     q[i]->lags = (uint64 *) mymalloc(length*sizeof(uint64));
@@ -413,10 +432,10 @@ static struct rngen **initialize(int ngen, int param, unsigned int seed,
 /* Initialize random number stream */
 
 #ifdef __STDC__
-int *init_rng( int gennum, int total_gen,  int seed, int param)
+int *init_rng(int rng_type, int gennum, int total_gen,  int seed, int param)
 #else
-int *init_rng(gennum,total_gen,seed,param)
-int gennum,param,seed,total_gen;
+int *init_rng(rng_type,gennum,total_gen,seed,param)
+int rng_type,gennum,param,seed,total_gen;
 #endif
 {
 /*      gives back one stream (node gennum) with updated spawning         */
@@ -463,7 +482,7 @@ int gennum,param,seed,total_gen;
   for (i=1;i<length-1;i++) 
     seti(0,nstart[i]);
 
-  p = initialize(1,param,seed^GS0,nstart,seed);  /* create a generator  */
+  p = initialize(rng_type, 1,param,seed^GS0,nstart,seed);  /* create a generator  */
   if (p==NULL) 
     return NULL;
   else
@@ -480,6 +499,7 @@ int gennum,param,seed,total_gen;
   NGENS++;
       
   
+  genptr->rng_type = rng_type;
   genptr->stream_number = gennum;
   genptr->nstreams = total_gen;
   
@@ -589,7 +609,7 @@ int *igenptr,nspawned, ***newgens, checkid;
   p = temp->si;
   
   
-  genptr = initialize(nspawned,temp->parameter,temp->seed,p,temp->init_seed);
+  genptr = initialize(temp->rng_type, nspawned,temp->parameter,temp->seed,p,temp->init_seed);
   if(genptr == NULL)	   /* allocate memory for pointers to structures */
   {
     *newgens = NULL;
@@ -668,7 +688,7 @@ char **buffer;
   struct rngen *q;
 
   q = (struct rngen *) genptr;
-  size = 24+16*q->lval + strlen(q->gentype)+1;
+  size = 4 + 24+16*q->lval + strlen(q->gentype)+1;
   
   initp = p = (unsigned char *) mymalloc(size); /* allocate memory */
   if(p == NULL)
@@ -677,6 +697,7 @@ char **buffer;
     return 0;
   }
   
+  p += store_int(q->rng_type,4,p);
   strcpy((char *) p,q->gentype);
   p += strlen(q->gentype)+1;
   p += store_int(q->stream_number,4,p);
@@ -714,6 +735,7 @@ char *packed;
     return NULL;
 
   p = (unsigned char *) packed;
+  p += load_int(p,4,(unsigned int *)&q->rng_type);
   if(strcmp((char *) p,GENTYPE) != 0)
   {
     fprintf(stderr,"ERROR: Unpacked ' %.24s ' instead of ' %s '\n",  
@@ -805,5 +827,3 @@ int *igen;
 }
 
 
-#include "../simple_.h"
-#include "../fwrap_.h"

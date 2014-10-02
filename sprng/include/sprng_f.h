@@ -2,6 +2,14 @@
 
 #ifndef _sprngf_h_
 
+#define SPRNG_LFG   0
+#define SPRNG_LCG   1
+#define SPRNG_LCG64 2
+#define SPRNG_CMRG  3
+#define SPRNG_MLFG  4
+#define SPRNG_PMLCG 5
+#define DEFAULT_RNG_TYPE SPRNG_LFG
+
 #define SPRNG_DEFAULT 0
 #define CRAYLCG 0
 #define DRAND48 1

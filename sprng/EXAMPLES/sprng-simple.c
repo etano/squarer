@@ -21,7 +21,7 @@ main()
 
   /************************** Initialization *******************************/
 
-  init_sprng(SEED,SPRNG_DEFAULT);     /* initialize stream                       */
+  init_sprng(DEFAULT_RNG_TYPE,SEED,SPRNG_DEFAULT);     /* initialize stream                       */
   printf(" Print information about new stream:\n");
   print_sprng();	
 

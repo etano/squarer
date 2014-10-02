@@ -11,6 +11,9 @@ C are theoriginal lines that need to be deleted.
 
        program sprngf_simple
        implicit none
+
+#define CONVERT
+
 #ifdef CONVERT
 #define SIMPLE_SPRNG	
 #include "sprng_f.h"
@@ -24,11 +27,18 @@ C are theoriginal lines that need to be deleted.
        real*8 rn
        integer seed, irn, i, junk
 
+C--- reading in a generator type
+       integer gtype
+#include "genf_types_menu.h"
+       print *,'Type in a generator type (integers: 0,1,2,3,4,5):  '
+       read *, gtype
+C---
+
        seed = 985456376
 
 #ifdef CONVERT
 C   initialization
-       junkPtr = init_sprng(seed,SPRNG_DEFAULT)
+       junkPtr = init_sprng(gtype,seed,SPRNG_DEFAULT)
        print *, 'Printing information about new stream'
        junk = print_sprng()
 #else

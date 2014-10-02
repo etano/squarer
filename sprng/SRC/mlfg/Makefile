@@ -20,42 +20,10 @@ CHKDIR = ../..
 
 include $(SRCDIR)/make.$(PLAT)
 
-all : mlfg timesprng checksprng
+all : mlfg.o 
 
-#---------------------------------------------------------------------------
-# Construct Library
-#---------------------------------------------------------------------------
-SPRNG_COMMON_DEPEND = $(SRCDIR)/fwrap_mpi.o  $(SRCDIR)/cputime.o \
-		      $(SRCDIR)/makeseed.o   $(SRCDIR)/simple_mpi.o \
-		      $(SRCDIR)/memory.o  $(SRCDIR)/communicate.o  $(SRCDIR)/checkid.o $(SRCDIR)/store.o
-
-mlfg :
-	(cd ..; $(MAKE) sprng_common)
-	$(MAKE) $(LIBDIR)/libmlfg.a
-
-$(LIBDIR)/libmlfg.a: mlfg.o  $(SPRNG_COMMON_DEPEND)
-	$(AR) $(ARFLAGS) $(LIBDIR)/libmlfg.a mlfg.o $(SPRNG_COMMON_DEPEND)
-	$(RANLIB) $(LIBDIR)/libmlfg.a
-
-mlfg.o : $(SRCDIR)/interface.h mlfg.c int64.h  $(SRCDIR)/memory.h $(SRCDIR)/store.h $(SRCDIR)/fwrap_.h
+mlfg.o : $(SRCDIR)/interface.h mlfg.c mlfg.h int64.h  $(SRCDIR)/memory.h $(SRCDIR)/store.h $(SRCDIR)/fwrap_.h
 	$(CC) -c $(CFLAGS)  $(FFXN) $(INLINEOPT) mlfg.c -I$(SRCDIR)
-
-
-#---------------------------------------------------------------------------
-# Time the generator
-#---------------------------------------------------------------------------
-timesprng :
-	(cd ..; $(MAKE) timesprng_exec TIMESPRNG_LIB=mlfg)
-
-
-#---------------------------------------------------------------------------
-# Check portability of generator
-#---------------------------------------------------------------------------
-checksprng :
-	(cd ..; $(MAKE) checksprng_exec CHECKSPRNG_LIB=mlfg)
-	cp mlfg.data $(CHKDIR)/.
-
-
 #---------------------------------------------------------------------------
 .F.f : 
 	@if [ -f $*.i ] ; then \

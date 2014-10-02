@@ -12,8 +12,8 @@ F77 = xlf
 # lines, as explained below. 
 MPICC = $(CC)
 MPIF77 = $(F77)
-CFLAGS = -O3 -qstrict -qarch=pwr2 -qlanglvl=ansi  -D$(PLAT)  -qtune=pwr2  -D_LONG_LONG $(MPIDEF)
-FFLAGS = -O3 -qstrict -qarch=pwr2  -qtune=pwr2   -WF,-I../SRC  $(FMPIDEF)
+CFLAGS = -O3 -qstrict -qarch=pwr2 -qlanglvl=ansi  -D$(PLAT)  -qtune=pwr2  -D_LONG_LONG $(PMLCGDEF) $(MPIDEF)
+FFLAGS = -O3 -qstrict -qarch=pwr2  -qtune=pwr2   -WF,-I../SRC  $(PMLCGDEF) $(FMPIDEF)
 CPP = xlf -c -d -qnoobj -WF,-P
 
 # To use MPI, set the MPIDIR to location of mpi library, and MPILIB 
@@ -26,9 +26,9 @@ CPP = xlf -c -d -qnoobj -WF,-P
 #MPIDIR = 
 #MPILIB = 
 #MPICC = mpcc
-#CFLAGS = -O3 -qstrict -qarch=pwr2 -qlanglvl=ansi  -D$(PLAT)  -qtune=pwr2 -I/usr/lpp/ppe.poe/include -D_LONG_LONG $(MPIDEF) 
+#CFLAGS = -O3 -qstrict -qarch=pwr2 -qlanglvl=ansi  -D$(PLAT)  -qtune=pwr2 -I/usr/lpp/ppe.poe/include -D_LONG_LONG $(PMLCGDEF) $(MPIDEF) 
 #MPIF77 = mpxlf
-#FFLAGS = -O3 -qstrict -qarch=pwr2  -qtune=pwr2   -WF,-I../SRC -WF,-I/usr/lpp/ppe.poe/include $(FMPIDEF) 
+#FFLAGS = -O3 -qstrict -qarch=pwr2  -qtune=pwr2   -WF,-I../SRC -WF,-I/usr/lpp/ppe.poe/include $(PMLCGDEF) $(FMPIDEF) 
 #CPP = xlf -c -d -qnoobj -WF,-P -WF,-I/usr/lpp/ppe.poe/include   $(FMPIDEF)
 
 CLD = $(CC)

@@ -13,10 +13,16 @@ C
        integer seed, i, junk
        SPRNG_POINTER junkPtr
        real*8 rn
+C---
+       integer gtype
+#include "genf_types_menu.h"
+       print *,'Type in a generator type (integers: 0,1,2,3,4,5):  '
+       read *, gtype
+C---
        
 C  generate a new seed each time program is run and initialize stream
        seed = make_sprng_seed()
-       junkPtr = init_sprng(seed,SPRNG_DEFAULT)
+       junkPtr = init_sprng(gtype,seed,SPRNG_DEFAULT)
        print *, 'Printing information about new stream'
        junk = print_sprng()
 

@@ -14,8 +14,8 @@
 #include "sprng.h"
 
 #define EXACT_PI 3.141592653589793238462643
-
-
+ 
+ int gtype;  /*---    */
 
 main(argc,argv)
 int argc;
@@ -24,8 +24,13 @@ char *argv[];
   int in, n, in_old, n_old;
   double pi, error, stderror, p=EXACT_PI/4.0;
   char filename[80];
+
+  /*--- reading in a generator type */
+#include "gen_types_menu.h"
+  printf("Type in a generator type (integers: 0,1,2,3,4,5):  ");
+  scanf("%d", &gtype);
   
-  initialize(&n, &in_old, &n_old, filename);	/* read args & initialize  */
+  initialize_function(&n, &in_old, &n_old, filename);	/* read args & initialize  */
   
   in = count_in_circle(n);	/* count samples in circle                 */
   
@@ -61,7 +66,7 @@ int n;
 
 
 /* Read arguments and initialize stream                                    */
-int initialize(n, in_old, n_old, filename)
+int initialize_function(n, in_old, n_old, filename)
 int *n, *in_old, *n_old; 
 char *filename;
 {
@@ -80,7 +85,7 @@ char *filename;
   {
     seed = make_sprng_seed();	/* make seed from date/time information    */
     
-    init_sprng(seed,CRAYLCG);	/* initialize stream                       */
+    init_sprng(gtype,seed,CRAYLCG);	/* initialize stream                       */
     print_sprng();		/* print information abour stream          */
 
     *in_old = 0;

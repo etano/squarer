@@ -212,8 +212,8 @@ printf("         \tEnergy\t\tEnergy_error\tSigma_Energy\tCv\t\tCv_error\tSigma_C
       compute(old_row);
 }
 
-
-void initialize(int seed, int param, int use_blocks)
+/*--- adding rng_type as a parameter ---*/
+void minitialize(int rng_type, int seed, int param, int use_blocks)
 {
   int i, j, temp;
   
@@ -251,11 +251,11 @@ void initialize(int seed, int param, int use_blocks)
   
   /* initialize generator */
   genptr = (int **) malloc(nsites*sizeof(int *));
-  genptr[0] = init_sprng(0,nsites,seed,param); 
+  genptr[0] = init_sprng(rng_type,0,nsites,seed,param); /*--- add rng_type ---*/
   print_sprng(genptr[0]);
   for(i=1; i<nsites; i++)
 #ifdef PARALLEL
-    genptr[i]=init_sprng(i,nsites,seed,param);
+    genptr[i]=init_sprng(rng_type,i,nsites,seed,param); /*--- add rng_type ---*/
 #else
     genptr[i]=genptr[0]; 
 #endif
@@ -338,12 +338,15 @@ lattice_size*lattice_size using the Metropolis algorithm for the Ising model */
 
 void main(int argc, char **argv)
 {
+  /*--- Add rng_time as the 1st argument ---*/
+  int rng_type;
   int seed, param, block_size, discard_blocks, use_blocks;
   
   /****************** Read and check Arguments ********************/
-  if(argc==7 )
+  if(argc==8 ) /*--- increase # of arguments by 1 ---*/
   {
     argv++;
+    rng_type = atoi(*argv++); /*--- get rng_type ---*/
     seed = atoi(*argv++);
     param = atoi(*argv++);
     lattice_size = atoi(*argv++);
@@ -364,8 +367,10 @@ void main(int argc, char **argv)
     exit(-1);
   }
 
-
-  initialize(seed, param, use_blocks); /* initalize data  */
+  /*--- add rng_type as the 1st parameter       ---*/
+  /*--- in order not to duplicate initialize()  ---*/
+  /*--- change to be minitialize()              ---*/
+  minitialize(rng_type, seed, param, use_blocks); /* initalize data  */
   
 
   /************** 'Thermalize' system so that results are not influenced

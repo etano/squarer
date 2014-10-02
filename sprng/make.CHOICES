@@ -1,5 +1,15 @@
 ############################################################################
 #
+#	Three decisions to make:
+#		1. Platform
+#		2. MPI version or Non-MPI version
+#		3. Is libgmp.a available
+#
+############################################################################
+#---------------------------------------------------------------------------
+#
+#		1. Platform
+#
 # We have set variables giving information on the archiver, the C compiler 
 # and the FORTRAN compiler for certain machines in SRC/make.xxx, where xxx 
 # is your machine name. In the lines that state: PLAT = ... , exactly one of 
@@ -15,21 +25,52 @@
 # the make.GENERIC file to suit your machine and continue with the 'make'
 # process.
 #
-# By default, the libraries are placed in the sprng/lib directory.
-# You can change this through the variable 'LIB_REL_DIR' below.
-############################################################################
+#---------------------------------------------------------------------------
 
 #PLAT = CONVEX
 #PLAT = DEC
 #PLAT = HP
-PLAT = LINUX
+#PLAT = INTEL
 #PLAT = O2K
 #PLAT  = SGI
-#PLAT = SOLARIS
 #PLAT = SP2		# IBM SP2
 #PLAT = SUN
 # For T3D, Use PLAT=T3E instead
 #PLAT =  T3E
-#PLAT  = GENERIC
+PLAT  = GENERIC
 
+############################################################################
+
+#---------------------------------------------------------------------------
+#
+#		2. MPI version or Non-MPI version
+#
+#	MPI version: uncomment the following line and 
+#		modify appropriate make.(PLAT) file
+#
+#	Non-MPI version: comment out the following line 
+#---------------------------------------------------------------------------
+
+#MPIDEF = -DSPRNG_MPI
+
+############################################################################
+
+
+#---------------------------------------------------------------------------
+#		3. Is libgmp.a available
+#
+# comment out if you want to exclude generator pmlcg which needs libgmp 
+#---------------------------------------------------------------------------
+
+#PMLCGDEF = -DUSE_PMLCG
+#GMPLIB = -lgmp
+
+############################################################################
+
+
+#---------------------------------------------------------------------------
+#	library dir for libsprng.a
+# By default, the libraries are placed in the sprng/lib directory.
+# You can change this through the variable 'LIB_REL_DIR' below.
+#---------------------------------------------------------------------------
 LIB_REL_DIR = lib

@@ -1,3 +1,6 @@
+----------------------------------------------------------------------------
+	!! See README in DOCS directory for interface changes !!
+----------------------------------------------------------------------------
 
           SPRNG: Scalable Parallel Random Number Generator libraries 
           ----------------------------------------------------------
@@ -22,15 +25,13 @@ random number tests, with around 10^13 RNs per test.
 Languages: C, C++, FORTRAN
 
 Platforms: Cray T3E, IBM SP2, SGI Power Challenge Array, Origin 2000,
-           CONVEX Exemplar, SUN workstations, PC running Linux, HP
+           CONVEX Exemplar, SUN workstations, Intel, HP
            workstations
 
 Generators: Modified Additive Lagged Fibonacci, Multiplicative Lagged
             Fibonacci, Combined Multiple Recursive generator, three types of
             Linear Congruential. 
 
-(The user can switch from one generator to another at link time,
-without modifying or recompiling the code.)
 
 Directory structure:
 

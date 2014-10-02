@@ -1,4 +1,3 @@
-
 C
 C        ____Demonstrates the use of sprng without initialization____      */
 C A few double precision random numbers are generated, without the user    */

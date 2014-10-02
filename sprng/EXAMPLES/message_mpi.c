@@ -26,7 +26,7 @@ main(int argc, char *argv[])
   int i, myid, nprocs, len;
   MPI_Status  status;
   char *packed;
-
+  int gtype;  /*---    */
 
   /************************** MPI calls ************************************/
             
@@ -40,13 +40,21 @@ main(int argc, char *argv[])
     MPI_Finalize();
     exit(1);
   }
-  
+  /*--- node 0 is reading in a generator type */
+  if(myid == 0)
+  {
+#include "gen_types_menu.h"
+    printf("Type in a generator type (integers: 0,1,2,3,4,5):  ");
+    scanf("%d", &gtype);
+  }
+  MPI_Bcast(&gtype,1,MPI_INT,0,MPI_COMM_WORLD ); /*--- broadcast gen type  */
+
   if (myid==0)	 /*********** process 0 sends stream to process 1 **********/
   {
     streamnum = 0;
     nstreams = 1;
-    stream = init_sprng(streamnum,nstreams,SEED,SPRNG_DEFAULT);/*initialize stream*/
-    printf("Process %d: Print information about stream:\n",myid);
+    stream = init_sprng(gtype,streamnum,nstreams,SEED,SPRNG_DEFAULT);/*initialize stream*/
+    printf("\n\nProcess %d: Print information about stream:\n",myid);
     print_sprng(stream);
 
     printf("Process %d: Print 2 random numbers in [0,1):\n", myid);

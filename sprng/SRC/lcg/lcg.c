@@ -23,12 +23,28 @@
 #include <string.h>
 #include <stdlib.h>
 #include "memory.h"
-#include "primes.h"
+#include "primes_32.h"
 #include "interface.h"
+#include "lcg.h"
 #include <limits.h>
 #define NDEBUG
 #include <assert.h>
 #include "store.h"
+
+#define init_rng lcg_init_rng
+#define get_rn_int lcg_get_rn_int
+#define get_rn_flt lcg_get_rn_flt
+#define get_rn_dbl lcg_get_rn_dbl
+#define spawn_rng lcg_spawn_rng
+#define get_seed_rng lcg_get_seed_rng
+#define free_rng lcg_free_rng
+#define print_rng lcg_print_rng
+#define pack_rng lcg_pack_rng
+#define unpack_rng lcg_unpack_rng
+
+#define MAX_STREAMS lcg_MAX_STREAMS
+#define NGENS lcg_NGENS
+
 
 #define VERSION "00"
 #define GENTYPE  VERSION "48 bit Linear Congruential Generator with Prime Addend"
@@ -127,6 +143,7 @@ int MAX_STREAMS = 1<<19;
 #ifdef LONG64
 struct rngen
 {
+  int rng_type;
   unsigned LONG64 seed;
   int init_seed;
   int prime;
@@ -143,6 +160,7 @@ unsigned LONG64 multiplier=0;
 #else
 struct rngen
 {
+  int rng_type;
   int seed[2];
   int init_seed;
   int prime;
@@ -225,10 +243,10 @@ int n;
 
 
 #ifdef __STDC__
-int *init_rng( int gennum,  int total_gen,  int seed, int mult)
+int *init_rng(int rng_type, int gennum,  int total_gen,  int seed, int mult)
 #else
-int *init_rng(gennum,total_gen,seed,mult)
-int gennum,mult,seed,total_gen;
+int *init_rng(rng_type,gennum,total_gen,seed,mult)
+int rng_type,gennum,mult,seed,total_gen;
 #endif
 {
 /*      gives back one generator (node gennum) with updated spawning     */
@@ -279,9 +297,10 @@ int gennum,mult,seed,total_gen;
   if(genptr == NULL)
     return NULL;
   
+  genptr->rng_type = rng_type;
   genptr->gentype = GENTYPE;
   genptr->init_seed = seed;
-  getprime(1, &(genptr->prime), gennum);
+  getprime_32(1, &(genptr->prime), gennum);
   genptr->prime_position = gennum;
   genptr->prime_next = total_gen;
   genptr->parameter = mult;
@@ -461,10 +480,11 @@ int *igenptr,nspawned, ***newgens, checkid;
     }
     
     genptr[i]->prime_next = (nspawned+1)*tempptr->prime_next;
-    getprime(1, &(genptr[i]->prime), genptr[i]->prime_position);
+    getprime_32(1, &(genptr[i]->prime), genptr[i]->prime_position);
     genptr[i]->multiplier = tempptr->multiplier;
     genptr[i]->parameter = tempptr->parameter;
     genptr[i]->gentype = tempptr->gentype;
+    genptr[i]->rng_type = tempptr->rng_type;
     
 #ifdef LONG64
     genptr[i]->seed = INIT_SEED;	/* initialize generator */
@@ -724,7 +744,7 @@ char **buffer;
   struct rngen *q;
   
   q = (struct rngen *) genptr;
-  size = 5*4 /*sizeof(int)*/ + 2*8/*sizeof(unsigned LONG64)*/ 
+  size = 6*4 /*sizeof(int)*/ + 2*8/*sizeof(unsigned LONG64)*/ 
     + strlen(q->gentype)+1;
   /* The new load/store routines make using sizeof unnecessary. Infact, */
   /* using sizeof could be erroneous. */
@@ -736,6 +756,7 @@ char **buffer;
   }
   
 
+  p += store_int(q->rng_type,4,p);
   strcpy((char *)p,q->gentype);
   p += strlen(q->gentype)+1;
 #ifdef LONG64
@@ -798,6 +819,7 @@ char *packed;
   if(q == NULL)
     return NULL;
  
+  p += load_int(p,4,(unsigned int *)&q->rng_type);
   if(strcmp((char *)p,GENTYPE) != 0)
   {
     fprintf(stderr,"ERROR: Unpacked ' %.24s ' instead of ' %s '\n",  
@@ -869,5 +891,3 @@ int *igen;
 }
 
 
-#include "../simple_.h"
-#include "../fwrap_.h"

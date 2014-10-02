@@ -20,7 +20,7 @@ main(int argc, char *argv[])
 {
   int i, myid;
   float rn;
-
+  int gtype;  /*---    */
 
   /************************** MPI calls ***********************************/
             
@@ -28,8 +28,16 @@ main(int argc, char *argv[])
   MPI_Comm_rank(MPI_COMM_WORLD, &myid);	/* find process id                */
 
   /*********************** Initialize streams *****************************/
+  /*--- node 0 is reading in a generator type */
+  if(myid == 0)
+  {
+#include "gen_types_menu.h"
+    printf("Type in a generator type (integers: 0,1,2,3,4,5):  ");
+    scanf("%d", &gtype);
+  }
+  MPI_Bcast(&gtype,1,MPI_INT,0,MPI_COMM_WORLD ); /*--- broadcast gen type */
 
-  init_sprng(SEED,SPRNG_DEFAULT);	/* initialize stream                      */
+  init_sprng(gtype,SEED,SPRNG_DEFAULT);	/* initialize stream                      */
   printf("Process %d: Print information about stream:\n",myid);
   print_sprng();
 

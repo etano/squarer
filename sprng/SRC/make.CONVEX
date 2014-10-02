@@ -18,13 +18,12 @@ MPICC = $(CC)
 # Also, if the previous compilation was without MPI, type: make realclean
 # before compiling for mpi.
 #
-MPIDEF = -DSPRNG_MPI -I/opt/mpi/include #Only if you plan to use MPI
 MPIDIR =  -L/opt/mpi/lib/pa1.1
 MPILIB = -lpmpi -lmpi /usr/lib/libail.sl -lcnx_syscall
 
-CFLAGS = +O4 +U77 +Odataprefetch +Olibcalls $(MPIDEF) +e -D$(PLAT) -D_LONG_LONG
+CFLAGS = +O4 +U77 +Odataprefetch +Olibcalls $(PMLCGDEF) $(MPIDEF) +e -D$(PLAT) -D_LONG_LONG
 CLDFLAGS = +O4 +U77 +Odataprefetch +Olibcalls +e
-FFLAGS = +O4  +U77 +Odataprefetch +Olibcalls $(MPIDEF)
+FFLAGS = +O4  +U77 +Odataprefetch +Olibcalls $(PMLCGDEF) $(MPIDEF)
 F77LDFLAGS = +O4  +U77 +Odataprefetch +Olibcalls
 
 CPP =fort77 -F 

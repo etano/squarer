@@ -1,8 +1,8 @@
 ############################################################################
 #
 # Then typing the command below   => results in the following being created
-#      make               => SPRNG libraries and example programs
-#      make src		  => SPRNG libraries (in ./lib) and certain executables
+#      make               => all
+#      make src		  => SPRNG library, libsprng, and checksprng, timesprng
 #      make examples	  => SPRNG examples
 #      make tests	  => Tests of quality of random streams
 #
@@ -26,15 +26,14 @@ include $(SRCDIR)/make.$(PLAT)
 
 all : src examples tests
 
-#---------------------------------------------------------------------------
 src :
-	(cd SRC; $(MAKE) LIBDIR=../$(LIBDIR) SRCDIR=../$(SRCDIR) PLAT=$(PLAT); cd ..)
+	(cd SRC; $(MAKE) ; cd ..)
 
 examples : 
-	(cd EXAMPLES; $(MAKE) LIBDIR=../$(LIBDIR) SRCDIR=../$(SRCDIR) PLAT=$(PLAT))
+	(cd EXAMPLES; $(MAKE); cd ..) 
 
 tests : 
-	(cd TESTS; $(MAKE) LIBDIR=../$(LIBDIR) SRCDIR=../$(SRCDIR) PLAT=$(PLAT))
+	(cd TESTS; $(MAKE) ; cd ..)
 
 #---------------------------------------------------------------------------
 clean :
@@ -50,6 +49,6 @@ realclean :
 	  $(MAKE) PLAT=$(PLAT) realclean ; \
 	  cd .. ; \
         done
-	@rm -f core *~ check* time* *.data
+	@rm -f core *~ check* tim* *.data gen*
 
-.SUFFIXES : 
+

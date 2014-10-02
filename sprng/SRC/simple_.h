@@ -13,19 +13,20 @@
 #endif
 #endif
 
+
 int *defaultgen=NULL;
 int junk;			/* pass useless pointer at times */
 
 #ifdef __STDC__
-int *init_rng_simple( int seed,  int mult)
+int *init_rng_simple(int rng_type, int seed,  int mult)
 #else
-int *init_rng_simple(seed,mult)
-int mult,seed;
+int *init_rng_simple(rng_type,seed,mult)
+int rng_type,mult,seed;
 #endif
 {
   int myid=0, nprocs=1, *temp;
   
-  temp = init_rng(myid,nprocs,seed,mult);
+  temp = init_rng(rng_type,myid,nprocs,seed,mult);
 
   if(temp == NULL)
     return NULL;
@@ -49,7 +50,7 @@ int get_rn_int_simple()
 #endif
 {
   if(defaultgen == NULL)
-    if(init_rng_simple(0,0) == NULL)
+    if(init_rng_simple(DEFAULT_RNG_TYPE,0,0) == NULL)
       return -1.0;
   
   return get_rn_int(defaultgen);
@@ -65,7 +66,7 @@ float get_rn_flt_simple()
 #endif
 {
   if(defaultgen == NULL)
-    if(init_rng_simple(0,0) == NULL)
+    if(init_rng_simple(DEFAULT_RNG_TYPE,0,0) == NULL)
       return -1.0;
   
   return get_rn_flt(defaultgen);
@@ -79,7 +80,7 @@ double get_rn_dbl_simple()
 #endif
 {
   if(defaultgen == NULL)
-    if(init_rng_simple(0,0) == NULL)
+    if(init_rng_simple(DEFAULT_RNG_TYPE,0,0) == NULL)
       return -1.0;
   
   return get_rn_dbl(defaultgen);

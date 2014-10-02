@@ -8,7 +8,7 @@ C #define CHECK_POINTERS
 
        program twostreamsf_mpi
        implicit none
-
+      
 #include <mpif.h>
 #include "sprng_f.h"
 
@@ -18,7 +18,9 @@ C #define CHECK_POINTERS
        integer i
        integer myid, nprocs, ierror
        integer junk
-
+C---
+       integer gtype       
+C---
       call MPI_INIT(ierror)
 
       call MPI_COMM_SIZE(MPI_COMM_WORLD, nprocs, ierror)
@@ -31,14 +33,24 @@ C #define CHECK_POINTERS
        nstreams = nprocs +1 !extra stream is common to all processes
        seed = 985456376
 
+C--- node 0 is reading in a generator type
+       if (myid .eq. 0) then	
+#include "genf_types_menu.h"
+	 print *,'Type in a generator type (integers: 0,1,2,3,4,5):  '
+         read *, gtype
+       endif
+       call MPI_BCAST(gtype,1, MPI_INTEGER,0,MPI_COMM_WORLD,ierror)
+C---
+
 C  This stream is different on each process
-       stream = init_sprng(streamnum,nstreams,seed,SPRNG_DEFAULT)
+       stream = init_sprng(gtype,streamnum,nstreams,seed,SPRNG_DEFAULT)
        write(6, 44) myid
  44    format("Process", i2, ": Print information about new stream")
        junk = print_sprng(stream)
 
 C  This stream is identical on each process
-       commonStream = init_sprng(commNum,nstreams,seed,SPRNG_DEFAULT)
+       commonStream = init_sprng(gtype,commNum,nstreams,
+     &      seed,SPRNG_DEFAULT)
        write (6, 55) myid
  55    format ("Process", i2, 
      &      ": This stream is identical on all processes")

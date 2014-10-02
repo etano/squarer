@@ -65,8 +65,24 @@
 #define NDEBUG
 #include <assert.h>
 #include "interface.h"
+#include "lfg.h"
 #include "memory.h"
 #include "store.h"
+
+#define init_rng lfg_init_rng
+#define get_rn_int lfg_get_rn_int
+#define get_rn_flt lfg_get_rn_flt
+#define get_rn_dbl lfg_get_rn_dbl
+#define spawn_rng lfg_spawn_rng
+#define get_seed_rng lfg_get_seed_rng
+#define free_rng lfg_free_rng
+#define pack_rng lfg_pack_rng
+#define unpack_rng lfg_unpack_rng
+#define print_rng lfg_print_rng
+
+#define MAX_STREAMS lfg_MAX_STREAMS
+#define NGENS lfg_NGENS
+#define valid lfg_valid
 
 /*#define PRINT_GEN*/
 
@@ -118,6 +134,7 @@
 /*************************************************************************/
 
 struct rngen {
+	  int rng_type;
       char *gentype;
       unsigned *si;      /* sets next branch seed  */
       unsigned *r0;      /* pointer to the even generator */
@@ -442,10 +459,10 @@ int *genptr;
 /*************************************************************************/
 
 #ifdef __STDC__
-static int **initialize(int ngen, int param, unsigned seed, unsigned *nstart, unsigned initseed)
+static int **initialize(int rng_type, int ngen, int param, unsigned seed, unsigned *nstart, unsigned initseed)
 #else
-static int **initialize(ngen,param, seed,nstart, initseed)
-int ngen, param;
+static int **initialize(rng_type, ngen,param, seed,nstart, initseed)
+int rng_type,  ngen, param;
 unsigned *nstart, seed, initseed;
 #endif
 {
@@ -467,6 +484,7 @@ unsigned *nstart, seed, initseed;
     if (q[i] == NULL) 
       return NULL;
 
+    q[i]->rng_type = rng_type;
     q[i]->hptr = length - 1;
     q[i]->si = (unsigned *) mymalloc((length-1)*sizeof(unsigned));
     q[i]->r0 = (unsigned *) mymalloc(length*sizeof(unsigned));
@@ -552,10 +570,10 @@ unsigned *nstart, seed, initseed;
 /*************************************************************************/
 
 #ifdef __STDC__
-int *init_rng( int gennum,  int total_gen,  int seed, int param)
+int *init_rng(int rng_type, int gennum,  int total_gen,  int seed, int param)
 #else
-int *init_rng(gennum,total_gen,seed,param)
-int gennum,param,seed,total_gen;
+int *init_rng(int rng_type,gennum,total_gen,seed,param)
+int rng_type,gennum,param,seed,total_gen;
 #endif
 {
   int doexit=0,i,k, length;
@@ -629,7 +647,7 @@ int gennum,param,seed,total_gen;
   for (i=1;i<length-1;i++) 
     nstart[i] = 0;
 
-  p = initialize(1,param,seed^GS0,nstart,seed);  /* create a generator  */
+  p = initialize(rng_type,1,param,seed^GS0,nstart,seed);  /* create a generator  */
   if (p==NULL) 
     return NULL;
   
@@ -644,6 +662,7 @@ int gennum,param,seed,total_gen;
   free(nstart);
 
   rng = p[0];
+  ((struct rngen *)rng)->rng_type = rng_type;
   free(p);
   
   return rng;
@@ -677,7 +696,7 @@ int *genptr,nspawned, ***newgens, checkid;
   
   p = temp->si;
   
-  q = initialize(nspawned,temp->param,temp->seed,p,temp->init_seed);
+  q = initialize(temp->rng_type,nspawned,temp->param,temp->seed,p,temp->init_seed);
   
   if (q == NULL) 
     {
@@ -855,7 +874,7 @@ char **buffer;
   unsigned char *p, *initp;
   
   q = (struct rngen *)genptr;
-  size = (3*(q->lval)+5)*4 + strlen(q->gentype)+1;
+  size = 4 + (3*(q->lval)+5)*4 + strlen(q->gentype)+1;
   /* The new load/store routines make using sizeof unnecessary. Infact, */
   /* using sizeof could be erroneous. */
   initp = p = (unsigned char *) mymalloc(size);
@@ -865,6 +884,7 @@ char **buffer;
     return 0;
   }
   
+  p += store_int(q->rng_type,4,p);
   strcpy((char *)p,q->gentype);
   p += strlen(q->gentype)+1;
   p += store_int(q->lval,4,p);
@@ -895,9 +915,11 @@ char *p;
   struct rngen *q;
   unsigned seed, lag1, lag2;
   unsigned char *packed;
+  int rng_type;
   
   packed = (unsigned char *) p;
   
+  packed += load_int(packed,4,&rng_type);
   if(strcmp((char *)packed,GENTYPE) != 0)
   {
     fprintf(stderr,"ERROR: Unpacked ' %.24s ' instead of ' %s '\n",  
@@ -947,6 +969,7 @@ char *p;
   if(q == NULL)
     return NULL;
   
+  q->rng_type = rng_type;
   q->gentype = GENTYPE;
   q->si = (unsigned *) mymalloc((length-1)*sizeof(unsigned));
   q->r0 = (unsigned *) mymalloc(length*sizeof(unsigned));
@@ -1017,5 +1040,3 @@ int *igen;
   return 1;
 }
 
-#include "../simple_.h"
-#include "../fwrap_.h"

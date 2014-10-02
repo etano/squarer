@@ -21,7 +21,7 @@ main(int argc, char *argv[])
   int streamnum, commNum, nstreams, *stream, *commonStream;
   double rn;
   int i, myid, nprocs;
-
+  int gtype;  /*---    */
 
   /************************** MPI calls ***********************************/
             
@@ -36,14 +36,22 @@ main(int argc, char *argv[])
   nstreams = nprocs + 1;	/* extra stream is common to all processes*/
 
   /*********************** Initialize streams *****************************/
-            
+  /*--- node 0 is reading in a generator type */
+  if(myid == 0)
+  {
+#include "gen_types_menu.h"    
+    printf("Type in a generator type (integers: 0,1,2,3,4,5):  ");
+    scanf("%d", &gtype);
+  }
+  MPI_Bcast(&gtype,1,MPI_INT,0,MPI_COMM_WORLD ); /*--- broadcast gen type */
+          
   /* This stream is different on each process                             */
-  stream = init_sprng(streamnum,nstreams,SEED,SPRNG_DEFAULT);
+  stream = init_sprng(gtype,streamnum,nstreams,SEED,SPRNG_DEFAULT);
   printf("Process %d: Print information about new stream\n", myid);
   print_sprng(stream);
 
   /* This stream is identical on each process                             */
-  commonStream = init_sprng(commNum,nstreams,SEED,SPRNG_DEFAULT);
+  commonStream = init_sprng(gtype,commNum,nstreams,SEED,SPRNG_DEFAULT);
   printf("Process %d: This stream is identical on all processes\n", myid);
   print_sprng(commonStream);
 

@@ -1,3 +1,10 @@
+C--- 8 June 1999 Chris S.  modified to read a file with the first argument
+C--- being a generator type
+C--- added 'integer gentype'
+C--- added 'Reading in a generator type' and   'read *, gentype'
+C--- added 'gtype' and 'integer gtype' to 'check_gen' and 'check_errors'
+C--- section 'Unpack invalid string' has been commented
+C--- it creates an error
 #define YES 1
 #define NO  0
 #define NULL 0
@@ -13,6 +20,7 @@
         integer check_errors_ptr
         integer result, temp
         integer seed1, seed2
+	integer gentype
 
         result = YES
 
@@ -24,14 +32,17 @@ C -- Checking make_sprng_seed ...
 	  result = NO
         end if
 
+C--- Reading in a generator type
+        read *, gentype
+
 C -- Check generator with correct parameters --
-        temp = check_gen_ptr()
+        temp = check_gen_ptr(gentype)
         if(temp .ne. YES) then
           result = NO
         end if
 
 C -- Check if generator meets specifications in handling errors --
-        temp = check_errors_ptr()
+        temp = check_errors_ptr(gentype)
         if(temp .ne. YES) then
           result = NO
         end if
@@ -47,11 +58,12 @@ C -- Check if generator meets specifications in handling errors --
         end
 
 
-        integer function check_gen_ptr()
+        integer function check_gen_ptr(gtype)
 
 	implicit none
 #include "sprng_f.h"
 
+	integer gtype
 
         SPRNG_POINTER gen1, gen2, gen3, gen4
 	SPRNG_POINTER gen5(1), newgen1(2), newgen2(2)
@@ -68,9 +80,9 @@ C -- Check if generator meets specifications in handling errors --
 
 	ngens = 3
 	seed = 985456376
-        gen1 = init_sprng(0,ngens,seed,PARAM)  
-        gen2 = init_sprng(1,ngens,seed,PARAM)
-        gen3 = init_sprng(2,ngens,seed,PARAM)
+        gen1 = init_sprng(gtype,0,ngens,seed,PARAM)  
+        gen2 = init_sprng(gtype,1,ngens,seed,PARAM)
+        gen3 = init_sprng(gtype,2,ngens,seed,PARAM)
 
 	result = YES
         correct = YES
@@ -221,12 +233,12 @@ C -- Free generators --
 	
 C -- Check if generator meets specifications in handling errors  -- 
 
-	integer function check_errors_ptr()
+	integer function check_errors_ptr(gtype)
 
 	implicit none
 #include "sprng_f.h"
 
-
+	integer gtype
 	SPRNG_POINTER gen1, gen2(1), genNULL
 	integer i, tempi, tempi1, tempi2 
         real*8 tempd1
@@ -240,7 +252,7 @@ C -- Check if generator meets specifications in handling errors  --
 	
 C -- checking incorrect nges in init_sprng --
 c	print *, 'Expect SPRNG WARNING: ngens <= 0.'
-        gen1 = init_sprng(0,0,seed,PARAM)
+        gen1 = init_sprng(gtype,0,0,seed,PARAM)
         do 100 i = 1,50
           tempi2 = isprng(gen1)
           read *, tempi1
@@ -271,7 +283,7 @@ C -- checking invalid range for gennum --
 
 	correct = YES
 c	print *, 'Expect SPRNG ERROR: gennum not in range.'
-	gen1 = init_sprng(-1,1,seed,PARAM)
+	gen1 = init_sprng(gtype,-1,1,seed,PARAM)
 	if (gen1 .ne. NULL) then
 	  tempi = free_sprng(gen1)
 	  result = NO
@@ -279,7 +291,7 @@ c	print *, 'Expect SPRNG ERROR: gennum not in range.'
 	endif
 
 c        print *, 'Expect SPRNG ERROR: gennum not in range.'
-        gen1 = init_sprng(2,1,seed,PARAM)
+        gen1 = init_sprng(gtype,2,1,seed,PARAM)
         if (gen1 .ne. NULL) then
           tempi = free_sprng(gen1)
           result = NO
@@ -296,7 +308,7 @@ c 	  print *, 'PASSED: Generator OK with worng gennum.'
 C-- Invalid parameter--
 	correct = YES
 c        print *, 'Expect SPRNG WARNING: Invalid parameter'
-	gen1 = init_sprng(0,1,seed,2**30)
+	gen1 = init_sprng(gtype,0,1,seed,2**30)
         do 200 i = 1,50
           tempi2 = isprng(gen1)
           read *, tempi1
@@ -330,7 +342,7 @@ C -- check spawned stream --
 	tempi = free_sprng(gen2(1))
 
         if(correct .eq. NO) then
-           print *, 'FAILED: Generator wrong when nspawned = 0.'
+           print *, 'FAILED: Generator wrong when nspawned = -1.'
         else
 c          print *, 'PASSED: Generator OK when nspawned = 0.'
 	endif
@@ -349,13 +361,13 @@ C -- Unpack invalid string --
 	  s(i) = '0'
  400    continue
 c	memset(s,0,MAX_PACKED_LENGTH)
-c        print *, 'Expect SPRNG ERROR: packed string invalid'
+       print *, 'Expect SPRNG ERROR: packed string invalid'
 	gen1 = unpack_sprng(s)
 	if (gen1 .ne. NULL) then
 	  result = NO
 	  print *, 'FAILED: Generator unpacks invalid string'
 	else
-c 	  print *, 'PASSED: Generator detected invalid string while unpacking'
+C 	  print *, 'PASSED: Generator detected invalid string while unpacking'
 	endif
 
 C -- Invalid ID s --

@@ -19,7 +19,6 @@ MPICC = $(CC)
 # Also, if the previous compilation was without MPI, type: make realclean
 # before compiling for mpi.
 #
-#MPIDEF = -DSPRNG_MPI #Only if you plan to use MPI
 #
 #MPIDIR =  
 #MPILIB =  
@@ -33,9 +32,9 @@ CMDLIB = -lU77
 # to build only the C version. Use of the flag mentioned above yields an
 # LCG that is about three times faster.
 
-CFLAGS =  -ansi -O2 -D$(PLAT) $(MPIDEF)
+CFLAGS =  -ansi -O2 -D$(PLAT) $(PMLCGDEF) $(MPIDEF)
 CLDFLAGS =  -O2
-FFLAGS =  -O2 $(MPIDEF) -D$(PLAT) 
+FFLAGS =  -O2 $(PMLCGDEF) $(MPIDEF) -D$(PLAT) 
 F77LDFLAGS = -O2
 
 CPP = fort77 -F 

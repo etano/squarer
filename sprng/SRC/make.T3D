@@ -12,14 +12,13 @@ FSUFFIX = f
 # Also, if the previous compilation was without MPI, type: make realclean
 # before compiling for mpi.
 #
-MPIDEF = -DSPRNG_MPI #Only if you plan to use MPI
 MPIDIR = -L/usr/local/mpp/lib
 MPILIB = -lmpi
 #
 
 # C compiler and loader
 CC = env TARGET=cray-t3d cc 
-CFLAGS =  -DT3D -O 3 $(MPIDEF) -I/usr/local/mpp/include
+CFLAGS =  -DT3D -O 3 $(PMLCGDEF) $(MPIDEF) -I/usr/local/mpp/include
 CLD = $(CC)
 CLDFLAGS = -O 3 
 FFXN =  -DUpCase

@@ -18,7 +18,6 @@ MPICC = $(CC)
 # Also, if the previous compilation was without MPI, type: make realclean
 # before compiling for mpi.
 #
-#MPIDEF = -DSPRNG_MPI #Only if you plan to use MPI
 MPIDIR = 
 MPILIB = 
 
@@ -27,10 +26,10 @@ MPILIB =
 # Try adding: -DGENERIC to CFLAGS. This can improve speed, but may give
 # incorrect values. Check with 'checksprng' to see if it works.
 
-CFLAGS = -O $(MPIDEF)
+CFLAGS = -O $(PMLCGDEF) $(MPIDEF)
 CLDFLAGS = -O
-FFLAGS = -O $(MPIDEF)
+FFLAGS = -O $(PMLCGDEF) $(MPIDEF)
 F77LDFLAGS = -O
 
-CPP = gfortran -F
+CPP = f77 -F
 

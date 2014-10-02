@@ -23,17 +23,23 @@ main(int argc, char *argv[])
   double rn;
   FILE *fp;
   char buffer[MAX_PACKED_LENGTH], outfile[80], infile[80], *bytes;
+  int gtype;  /*---    */
   
-  
+
+  /*--- reading in a generator type */
+#include "gen_types_menu.h"
+  printf("Type in a generator type (integers: 0,1,2,3,4,5):  ");
+  scanf("%d", &gtype);
+
   /*********************** Initialize streams *******************************/
-       
+         
   printf("Enter name of file to store final state of the stream:\n");
   scanf("%s", outfile);
   printf("Enter name of file to read from:\n\t(enter 9 for a new run)\n");
   scanf("%s", infile);
   
   if(infile[0] == '9')		/* initialize stream the first time         */
-    init_sprng(SEED,SPRNG_DEFAULT);
+    init_sprng(gtype,SEED,SPRNG_DEFAULT);
   else           		/* read stream state from file afterwards   */
   {
     fp = fopen(infile,"r");

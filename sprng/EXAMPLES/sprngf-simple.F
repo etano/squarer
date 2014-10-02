@@ -14,12 +14,18 @@ C
        SPRNG_POINTER junkPtr
        real*8 rn
        integer seed, irn, i, junk
+C--- reading in a generator type
+       integer gtype
+#include "genf_types_menu.h"
+       print *,'Type in a generator type (integers: 0,1,2,3,4,5):  '
+       read *, gtype
+C--- 
 
        seed = 985456376
 
 
 C   initialization
-       junkPtr = init_sprng(seed,SPRNG_DEFAULT)
+       junkPtr = init_sprng(gtype,seed,SPRNG_DEFAULT)
        print *, 'Print information about new stream:'
        junk = print_sprng()
 

@@ -1,3 +1,10 @@
+C--- 8 June 1999 Chris S.  modified to read a file with the first argument 
+C--- being a generator type
+C--- added 'integer gentype'
+C--- added 'Reading in a generator type' and   'read *, gentype'
+C--- added 'gtype' and 'integer gtype' to 'check_gen' and 'check_errors'
+
+
 #define YES 1
 #define NO  0
 #define NULL 0
@@ -13,6 +20,7 @@
         integer check_simple_errors
         integer result, temp
         integer seed1, seed2
+	integer gentype
 
         result = YES
         seed1 = make_sprng_seed()
@@ -23,7 +31,10 @@
 	  result = NO
         end if
 
-        temp = check_simple_gen()
+C--- Reading in a generator type
+        read *, gentype
+
+        temp = check_simple_gen(gentype)
         if(temp .ne. YES) then
           result = NO
         end if
@@ -44,11 +55,12 @@
         end
 
 
-        integer function check_simple_gen()
+        integer function check_simple_gen(gtype)
 
 	implicit none
 #include "sprng_f.h"
 
+	integer gtype
         SPRNG_POINTER gen
 	integer tempi1, tempi2, seed, size, dblmult
 	real tempf1
@@ -62,7 +74,7 @@
 	fltmult = 2**20
 	dblmult = 2**30
 
-        gen = init_sprng(seed,PARAM)  
+        gen = init_sprng(gtype,seed,PARAM)  
 	if (gen .eq. NULL) then
 	  result = NO
 	  print *, ' FAILED: SPRNG unable to initialize the generator.'
@@ -164,7 +176,6 @@ C  -- Check if generator meets specifications in handling errors --
 	implicit none
 #include "sprng_f.h"
 
-
 	SPRNG_POINTER gen1
 	integer i, tempi1, tempi2, correct, result, seed 
 	character s(MAX_PACKED_LENGTH)
@@ -177,7 +188,7 @@ C  -- Check if generator meets specifications in handling errors --
         do 100 i = 1, MAX_PACKED_LENGTH
            s(i) = '0'
  100    continue
-c	print *, ' Expect SPRNG ERROR: packed string invalid.'
+	print *, ' Expect SPRNG ERROR: packed string invalid.'
 	
 	gen1 = unpack_sprng(s(1))
 	if (gen1 .ne. NULL) then
@@ -187,7 +198,7 @@ c	  print *, 'PASSED: Generator detected invalid string while unpacking.'
 	endif
 
 	correct = YES
-        do 200 i = 1,50
+	do 200 i = 1,50
           tempi2 = isprng()
           read *, tempi1
           if(tempi2 .ne. tempi1) then
@@ -200,7 +211,7 @@ c	  print *, 'PASSED: Generator detected invalid string while unpacking.'
            print *, 'FAILED: Original stream not maintained '
            print *, '    ... when unpacked stream is invalid.'
         else
-c            print *, 'PASSED: Generator OK with invalid unpacked stream.'
+c	   print *, 'PASSED: Generator OK with invalid unpacked stream.'
         end if
 
         check_simple_errors = result

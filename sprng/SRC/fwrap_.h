@@ -61,38 +61,38 @@ int FNAMEOF_fmake_new_seed()
 }
 
 #ifdef __STDC__
-int * FNAMEOF_finit_rng_sim( int *seed,  int *mult)
+int * FNAMEOF_finit_rng_sim(int *rng_type, int *seed,  int *mult)
 #else
-int * FNAMEOF_finit_rng_sim(seed,mult)
-int *mult,*seed;
+int * FNAMEOF_finit_rng_sim(rng_type, seed,mult)
+int *rng_type, *mult,*seed;
 #endif
 {
-	return init_rng_simple(*seed, *mult);
+	return init_rng_simple(*rng_type, *seed, *mult);
 }
 
 
 
 #ifdef __STDC__
-int * FNAMEOF_finit_rng( int *gennum, int *total_gen, int *seed,
+int * FNAMEOF_finit_rng(int *rng_type, int *gennum, int *total_gen, int *seed,
 			 int *length)
 #else
-int * FNAMEOF_finit_rng(gennum, total_gen, seed, length)
-int *gennum, *length, *seed, *total_gen;
+int * FNAMEOF_finit_rng(rng_type, gennum, total_gen, seed, length)
+int *rng_type, *gennum, *length, *seed, *total_gen;
 #endif
 {
-	return init_rng(*gennum, *total_gen, *seed, *length);
+	return init_rng(*rng_type, *gennum, *total_gen, *seed, *length);
 }
 
 #ifdef __STDC__
-int * FNAMEOF_finit_rng_ptr( int *gennum,  int *total_gen,
+int * FNAMEOF_finit_rng_ptr(int *rng_type, int *gennum,  int *total_gen,
 			     int *seed,  int *length)
 #else
-int * FNAMEOF_finit_rng_ptr(gennum, total_gen, seed, length)
-int *gennum, *length, *seed, *total_gen;
+int * FNAMEOF_finit_rng_ptr(rng_type, gennum, total_gen, seed, length)
+int *rng_type, *gennum, *length, *seed, *total_gen;
 #endif
 {
   int *tmpGen;
-  tmpGen = init_rng(*gennum, *total_gen, *seed, *length);
+  tmpGen = init_rng(*rng_type, *gennum, *total_gen, *seed, *length);
   addID(tmpGen);
   return tmpGen;
 }

@@ -21,6 +21,8 @@
 #define EXACT_PI 3.141592653589793238462643
 #define RECV_STREAM_TAG 1
 
+int gtype;  /*---    */
+
 main(argc,argv)
 int argc;
 char *argv[];
@@ -28,14 +30,21 @@ char *argv[];
   int in, i, seed, n, my_n, in_old, n_old, nprocs, myid, temp;
   double pi, error, stderror, p=EXACT_PI/4.0;
   char filename[80];
-  
   /*************************** Initialization ******************************/
 
   MPI_Init(&argc,&argv);	/* Initialize MPI                          */
   MPI_Comm_size(MPI_COMM_WORLD,&nprocs); /* Find number of processes       */
   MPI_Comm_rank(MPI_COMM_WORLD,&myid); /* Find rank of process             */
+/*--- node 0 is reading in a generator type */
+  if(myid == 0)
+  {
+#include "gen_types_menu.h"
+    printf("Type in a generator type (integers: 0,1,2,3,4,5):  ");
+    scanf("%d", &gtype);
+  }
+  MPI_Bcast(&gtype,1,MPI_INT,0,MPI_COMM_WORLD );   
 
-  initialize(&n, &in_old, &n_old, filename);	/* read args & initialize  */
+  initialize_function(&n, &in_old, &n_old, filename); /* read args & initialize  */
   
   my_n = n/nprocs;		/* number of samples for this process      */
   if(myid < n%nprocs)
@@ -89,7 +98,7 @@ int n;
 
 
 /* Read arguments and initialize stream                                    */
-int initialize(n, in_old, n_old, filename)
+int initialize_function(n, in_old, n_old, filename)
 int *n, *in_old, *n_old;
 char *filename;
 {
@@ -119,7 +128,7 @@ char *filename;
   {
       seed = make_sprng_seed();	/* make seed from date/time information    */
     
-      init_sprng(seed,CRAYLCG);	/* initialize stream                       */
+      init_sprng(gtype,seed,CRAYLCG);	/* initialize stream                       */
       print_sprng();
 
     *in_old = 0;

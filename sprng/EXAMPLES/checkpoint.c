@@ -24,11 +24,21 @@ main(int argc, char *argv[])
   double rn;
   FILE *fp;
   char buffer[MAX_PACKED_LENGTH], outfile[80], infile[80], *bytes;
+  int j;
+  
+  int rng_type_ary[] = {SPRNG_LFG, SPRNG_LCG, SPRNG_LCG64, SPRNG_CMRG,\
+	        SPRNG_MLFG, SPRNG_PMLCG};
+  int gtype;  /*---    */
   
   /****************** Initialization values *********************************/
             
   streamnum = 0;
   nstreams = 1;
+  
+  /*--- reading in a generator type */
+#include "gen_types_menu.h"
+  printf("Type in a generator type (integers: 0,1,2,3,4,5):  ");
+  scanf("%d", &gtype);
   
   /*********************** Initialize streams *******************************/
 
@@ -38,13 +48,16 @@ main(int argc, char *argv[])
   scanf("%s", infile);
   
   if(infile[0] == '9')		/* initialize stream the first time         */
-    stream = init_sprng(streamnum,nstreams,SEED,SPRNG_DEFAULT);
+    stream = init_sprng(gtype, \
+			streamnum,nstreams,SEED,SPRNG_DEFAULT);
   else           		/* read stream state from file afterwards   */
   {
     fp = fopen(infile,"r");
     fread(&size,1,sizeof(int),fp);
     fread(buffer,1,size,fp);
+	printf("Before unpack\n");
     stream = unpack_sprng(buffer);
+	printf("After unpack\n");
     fclose(fp);
   }
   
@@ -75,4 +88,5 @@ main(int argc, char *argv[])
             
   free(bytes);			/* free memory needed to store stream state */
   free_sprng(stream);           /* free memory used to store stream state   */
+/*}*/
 }

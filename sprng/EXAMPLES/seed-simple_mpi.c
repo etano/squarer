@@ -17,7 +17,7 @@ main(int argc, char *argv[])
   int seed;
   double rn;
   int myid, i;
-
+  int gtype;  /*---    */
 
 
   /*************************** MPI calls ***********************************/
@@ -29,10 +29,19 @@ main(int argc, char *argv[])
 
   seed = make_sprng_seed();	/* make new seed each time program is run  */
 
-  /* Seed should be the same on all processes                              */
-  printf("Process %d: seed = %16d\n", myid, seed);
+  /*--- node 0 is reading in a generator type */
+  if(myid == 0)
+  {
+#include "gen_types_menu.h"
+    printf("Type in a generator type (integers: 0,1,2,3,4,5):  ");
+    scanf("%d", &gtype);
+  }
+  MPI_Bcast(&gtype,1,MPI_INT,0,MPI_COMM_WORLD ); /*--- broadcasting gen type */
 
-  init_sprng(seed,SPRNG_DEFAULT);	/* initialize stream                       */
+  /* Seed should be the same on all processes                              */
+  printf("\n\nProcess %d: seed = %16d\n", myid, seed);
+
+  init_sprng(gtype,seed,SPRNG_DEFAULT);	/* initialize stream             */
   printf("Process %d: Print information about stream:\n",myid);
   print_sprng();
 

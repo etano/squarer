@@ -22,9 +22,9 @@ MPICC = $(CC)
 MPIDIR = 
 MPILIB = 
 
-CFLAGS = -D$(PLAT) $(MPIDEF) -O3 -std1 -assume noaligned_objects -DLittleEndian
+CFLAGS = -D$(PLAT) $(PMLCGDEF) $(MPIDEF) -O3 -std1 -assume noaligned_objects -DLittleEndian
 CLDFLAGS =  -O3 -std1 -assume noaligned_objects
-FFLAGS = $(MPIDEF)  -O3 -D$(PLAT) -DPOINTER_SIZE=8
+FFLAGS = $(PMLCGDEF) $(MPIDEF)  -O3 -D$(PLAT) -DPOINTER_SIZE=8
 F77LDFLAGS = -O3
 
 CPP = f77 -F
