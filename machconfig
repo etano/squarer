@@ -93,7 +93,7 @@ then
      echo FC = segldr                      >> L_OPTIONS
      FC = segldr
 fi
-echo LDFLAGS = $LDFLAGS                    >> L_OPTIONS
+#echo LDFLAGS = $LDFLAGS                    >> L_OPTIONS
 
 echo $MACHDIR > environment
 echo $MACHDIR 
