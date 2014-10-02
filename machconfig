@@ -5,7 +5,7 @@ FORLIB="forsub/*.o"
 LINUXDIR=linuxrtl
 FC="gfortran"
 LINUXFLAGS="-g -O3"
-SPRNGFLAGS="-I${SQUARER_HOME}/sprng/SRC -L${SQUARER_HOME}/sprng/lib -llcg64"
+SPRNGFLAGS="-I${SQUARER_HOME}/sprng/SRC -L${SQUARER_HOME}/sprng/lib -lsprng"
 BLASLAPACKFLAGS="-L/usr/lib -I/usr/include -lblas -llapack -I${SQUARER_HOME}/linpack -L${SQUARER_HOME}/linpack"
 LINUXLD="${SPRNGFLAGS} ${BLASLAPACKFLAGS}"
 
