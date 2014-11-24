@@ -8,7 +8,9 @@ LINUXFLAGS="-g -O3"
 SQUARER_HOME=".."
 SPRNGFLAGS="-I${SQUARER_HOME}/sprng/SRC -L${SQUARER_HOME}/sprng/lib -lsprng"
 BLASLAPACKFLAGS="-L/usr/lib -I/usr/include -I/usr/local/include -L/usr/local/lib -I${MKL_HOME}/include -L${MKL_HOME}/lib -fopenmp -lmkl_gnu_thread -lmkl_core -lmkl_gf_lp64 -I${SQUARER_HOME}/linpack -L${SQUARER_HOME}/linpack"
+DARWINBLASLAPACKFLAGS="-L/usr/lib -I/usr/include -I/usr/local/include -L/usr/local/lib -lblas -llapack -I${SQUARER_HOME}/linpack -L${SQUARER_HOME}/linpack"
 LINUXLD="${SPRNGFLAGS} ${BLASLAPACKFLAGS}"
+DARWINLD="${SPRNGFLAGS} ${DARWINBLASLAPACKFLAGS}"
 
 IBMDIR=ibmrtl
 IBMFLAGS="-g -qdpc=e -O"
@@ -55,7 +57,7 @@ case `uname -s` in
    # Darwin
         MACHDIR=$LINUXDIR
         FFLAGS=$LINUXFLAGS
-        LDFLAGS=$LINUXLD
+        LDFLAGS=$DARWINLD
         ;;
    HP*)
    # HP-UX
