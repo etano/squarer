@@ -5,9 +5,9 @@ FORLIB="forsub/*.o"
 LINUXDIR=linuxrtl
 FC="gfortran"
 LINUXFLAGS="-g -O3"
-SQUARER_HOME="${HOME}/src/pagen/davidSQUARER"
+SQUARER_HOME=".."
 SPRNGFLAGS="-I${SQUARER_HOME}/sprng/SRC -L${SQUARER_HOME}/sprng/lib -lsprng"
-BLASLAPACKFLAGS="-L/usr/lib -I/usr/include -lblas -llapack -I${SQUARER_HOME}/linpack -L${SQUARER_HOME}/linpack"
+BLASLAPACKFLAGS="-L/usr/lib -I/usr/include -I/usr/local/include -L/usr/local/lib -I${INCLUDE} -L${LD_LIBRARY_PATH} -llapack -lcblas -lf77blas -latlas -lgfortran -I${SQUARER_HOME}/linpack -L${SQUARER_HOME}/linpack"
 LINUXLD="${SPRNGFLAGS} ${BLASLAPACKFLAGS}"
 
 IBMDIR=ibmrtl
