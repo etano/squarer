@@ -7,7 +7,7 @@ FC="gfortran"
 LINUXFLAGS="-g -O3"
 SQUARER_HOME=".."
 SPRNGFLAGS="-I${SQUARER_HOME}/sprng/SRC -L${SQUARER_HOME}/sprng/lib -lsprng"
-BLASLAPACKFLAGS="-L/usr/lib -I/usr/include -I/usr/local/include -L/usr/local/lib -I${INCLUDE} -L${LD_LIBRARY_PATH} -llapack -lcblas -lf77blas -latlas -lgfortran -I${SQUARER_HOME}/linpack -L${SQUARER_HOME}/linpack"
+BLASLAPACKFLAGS="-L/usr/lib -I/usr/include -I/usr/local/include -L/usr/local/lib -I${MKL_HOME}/include -L${MKL_HOME}/lib -fopenmp -lmkl_gnu_thread -lmkl_core -lmkl_gf_lp64 -I${SQUARER_HOME}/linpack -L${SQUARER_HOME}/linpack"
 LINUXLD="${SPRNGFLAGS} ${BLASLAPACKFLAGS}"
 
 IBMDIR=ibmrtl
