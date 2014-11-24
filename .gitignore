@@ -22,7 +22,28 @@
 
 # Generated files
 C_OPTIONS
-L_OTIONNS
+L_OPTIONS
 rtl
 *.csprng
 *.fsprng
+sprng/EXAMPLES/gen_types_menu.h
+sprng/EXAMPLES/genf_types_menu.h
+sprng/checksprng
+sprng/gen0_lfg
+sprng/gen0_lfg.data
+sprng/gen1_lcg
+sprng/gen1_lcg.data
+sprng/gen2_lcg64
+sprng/gen2_lcg64.data
+sprng/gen3_cmrg
+sprng/gen3_cmrg.data
+sprng/gen4_mlfg
+sprng/gen4_mlfg.data
+sprng/gen5_pmlcg
+sprng/gen5_pmlcg.data
+sprng/timesprng
+sprng/timingcsprng
+sprng/timingfsprng
+sqdir/potgen_lr
+sqdir/potgen_sr
+sqdir/squarer
