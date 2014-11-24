@@ -19,3 +19,10 @@
 
 # Vim
 *.swp
+
+# Generated files
+C_OPTIONS
+L_OTIONNS
+rtl
+*.csprng
+*.fsprng

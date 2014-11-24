@@ -23,7 +23,7 @@ Nlinpack :
 	( cd linpack ; sh compile.sh )
 
 Nsprng :
-	( cd sprng ; make )
+	( cd sprng/SRC ; make )
 
 Nrtl : rtl C_OPTIONS
 	( cd rtl ; make rtl )
@@ -39,7 +39,7 @@ Nsqdir : sqdir C_OPTIONS
 
 clean : 
 	(cd linpack; rm *.o *.a)
-	(cd sprng; make clean)
+	(cd sprng/SRC; make clean)
 	(cd fnlib; make clean)
 	(cd sqdir; make clean)
 	(cd forsub; make clean)

@@ -1,7 +1,0 @@
-FORLIB = forsub/*.o
-FORSUB = Nforsub
-
-# compilation options for  rtls/linuxrtl
-FC = gfortran
-FFLAGS = -g -O3
-
