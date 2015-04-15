@@ -21,6 +21,7 @@
 *.swp
 
 # Generated files
+OPTIONS
 C_OPTIONS
 L_OPTIONS
 rtl
