@@ -10,10 +10,14 @@
        integer ntypes,nx,ifpair,j,ipickoff,n,ng,ix,i,k,npts
      &,intread,ln,n1,ntail
 
+      character *100 BUFFER
+      call getarg(1,BUFFER)
+      read(BUFFER,*) fname
       write (*,*)' input prefix of files '
-      read (*,99) fname
-99    format(a30)
+c      read (*,99) fname
+99    format(a20)
       ln=index(fname,' ')-1
+      write (*,*) fname
       open(1,file=fname(1:ln)//'.in')
 c output file
       open (3,file=fname(1:ln)//'.dm',status='unknown')
@@ -79,16 +83,16 @@ c now check grid
 
 c zero potential at cutr
       cutr=rlread(pot(2))
-       call ipot(pot,n1,pot0,cutr,eunit,lunit,ntail,expon,cexpon)
-!      pot0=0.d0  ! just for testing wall
+      !call ipot(pot,n1,pot0,cutr,eunit,lunit,ntail,expon,cexpon)
+      pot0=0.d0  ! just for testing wall
       write (3,33)pot0,ntail,(expon(i),cexpon(i),i=1,ntail)
 33    format(' POTTAIL ',e14.5,i3,5(f7.2,e13.5))
        do i=1,nx
-       if(rv(i).le.cutr) then
+       !if(rv(i).le.cutr) then
          pott(i)=pott(i)-pot0
-       else
-         pott(i)=0
-       endif
+       !else
+       !  pott(i)=0
+       !endif
       enddo
  
       grid(2)='1 '
