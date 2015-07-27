@@ -1,11 +1,11 @@
       subroutine setgrid(mx,nxx,r,p)
 c returns a grid in r and puts constants in common
       include 'mach.p'
-      real*8 r,dri,di,x0,rr,r1,rn,dr,d,gg,f1,fn,rlread,y
+      real*8 r,dri,di,x0,rr,r1,rn,dr,d,gg,f1,fn,rlread,y,gdr
       integer mx,nxx,nx,i
       dimension r(mx)
       character gtype*8, p(5)*(*)
-      common/gcom/gtype,dri,di,x0,rr,nx !this common communicates with interp
+      common/gcom/gtype,dri,di,x0,rr,nx,gdri,gx0,gnr !this common communicates with interp
       gtype=p(1)
       nx=nxx
       if(nx.le.0.or.nx.gt.mx)stop
@@ -62,8 +62,25 @@ c returns a grid in r and puts constants in common
         r(i)=rr+dr*(i-x0)**d
         enddo
 
+      elseif(gtype.eq.'LOGLIN') then
+        gnr=rlread(p(4))
+        gx0=((nx/2.)-1.)/log(gnr/r1)
+        gdri=1./r1
+        gdr=(gnr/r1)**(1./((nx/2.)-1.))
+        dri=((nx/2.)-1.)/(rn-gnr)
+        x0=(nx/2.)-gnr*dri
+        dr=1./dri
+        do i=1,nx
+          if(i>nx/2.) then
+            r(i)=gnr+dr*(i-(nx/2.))
+          else
+            r(i)=r1*gdr**(i-1)
+          endif
+        enddo
+
       else
         write (*,*)' grid type undefined '
+        write (*,*) gtype
         stop
       endif
       write (*,*) nxx,r1,rn

@@ -7,7 +7,7 @@ c norder(morder) is the order of the polynomial fit
 c ntemp(mtemp) are the number of temperatures to be output
       integer mx,nx,ml,nl,norder,morder,ntemp,mtemp,mx2,morder2,mn,md
 
-      parameter (mx=650, ml=64, morder=3, mtemp=12, md=2)
+      parameter (mx=999, ml=64, morder=3, mtemp=12, md=2)
 c md= number of derivatives.1: u only, 2:also ub, 3:also uk.
 c 
       parameter (mx2=mx*(mx+1)/2, morder2= (morder+3)*morder/2)

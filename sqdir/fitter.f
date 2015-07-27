@@ -8,7 +8,7 @@ c transforms uold from partial waves to polynomial method.
      +,norder,morder,i,i1,ix2,ix3,ix4,isym,l,ktrm,ix,ix1,ic,mdatam
      .,if,ie,iexp,nexp,info
 c local parameters: mxx=no of grid points, mml=number of grid points
-      parameter (mxx=600,mml=128,mc=30,mdata=100000,mo=10,nexp=10
+      parameter (mxx=999,mml=128,mc=30,mdata=100000,mo=10,nexp=10
      + ,iexp=1     ,mo2=mo*(mo+3)/2)
        integer nkt(0:mo),iwr
 c if bothsz=true we do a 2d fit in s and z. else a 1d fit in s only.
