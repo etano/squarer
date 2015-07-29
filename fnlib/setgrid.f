@@ -67,8 +67,8 @@ c returns a grid in r and puts constants in common
         gx0=((nx/2.)-1.)/log(gnr/r1)
         gdri=1./r1
         gdr=(gnr/r1)**(1./((nx/2.)-1.))
-        dri=((nx/2.)-1.)/(rn-gnr)
-        x0=(nx/2.)-gnr*dri
+        dri=(((nx/2.)+1.)-1.)/(rn-gnr)
+        x0=((nx/2.))-gnr*dri
         dr=1./dri
         do i=1,nx
           if(i>nx/2.) then

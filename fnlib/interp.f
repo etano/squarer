@@ -17,10 +17,10 @@ c routine to produce interpolation values
       elseif(gtype.eq.'LOG') then
       x=1+x0*log(dri*r)
       elseif(gtype.eq.'LOGLIN') then
-        if (r.lt.gnr) then
-          x=1+gx0*log(gdri*r)
-        else
+        if (r.gt.gnr) then
           x=x0+dri*r
+        else
+          x=1+gx0*log(gdri*r)
         endif
       endif
 
